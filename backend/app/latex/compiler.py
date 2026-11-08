@@ -78,15 +78,30 @@ class LatexCompiler:
             else:
                 averages[target] = "-"
 
+        # Extract PSOs dynamically from course meta
+        pso_items = []
+        if curriculum.course_meta.psos:
+            pso_items = [p.dict() if hasattr(p, "dict") else {"pso_id": p.get("pso_id", "PSO1"), "statement": p.get("statement", "")} for p in curriculum.course_meta.psos]
+        else:
+            pso_items = [
+                {"pso_id": "PSO1", "statement": "Professional Skills: Design and develop enterprise cloud and edge systems."},
+                {"pso_id": "PSO2", "statement": "Industrial Competence: Implement streaming data architectures and real-time AI pipelines."},
+                {"pso_id": "PSO3", "statement": "Research & Ethics: Formulate secure, sustainable computing solutions."}
+            ]
+
+        po_list = [f"PO{i}" for i in range(1, 13)]
+
         raw_context = {
-            "meta": curriculum.course_meta.dict(),
-            "course_outcomes": [co.dict() for co in curriculum.course_outcomes],
-            "modules": [mod.dict() for mod in curriculum.modules],
+            "meta": curriculum.course_meta.dict() if hasattr(curriculum.course_meta, "dict") else curriculum.course_meta.__dict__,
+            "course_outcomes": [co.dict() if hasattr(co, "dict") else co.__dict__ for co in curriculum.course_outcomes],
+            "modules": [mod.dict() if hasattr(mod, "dict") else mod.__dict__ for mod in curriculum.modules],
             "matrix_lookup": matrix_lookup,
             "averages": averages,
-            "textbooks": [b.dict() for b in curriculum.textbooks],
-            "reference_books": [r.dict() for r in curriculum.reference_books],
-            "assessment": curriculum.assessment_scheme.dict(),
+            "po_list": po_list,
+            "pso_list": pso_items,
+            "textbooks": [b.dict() if hasattr(b, "dict") else b.__dict__ for b in curriculum.textbooks],
+            "reference_books": [r.dict() if hasattr(r, "dict") else r.__dict__ for r in curriculum.reference_books],
+            "assessment": curriculum.assessment_scheme.dict() if hasattr(curriculum.assessment_scheme, "dict") else curriculum.assessment_scheme.__dict__,
         }
 
         context = self._sanitize_data_recursively(raw_context)

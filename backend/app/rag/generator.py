@@ -16,6 +16,7 @@ from backend.app.schemas.curriculum import (
     CurriculumCreate,
     GenerationRequest,
     ModuleTopic,
+    ProgramSpecificOutcome,
 )
 
 logger = logging.getLogger(__name__)
@@ -36,18 +37,27 @@ NBA_PROGRAM_OUTCOMES = [
 ]
 
 DEFAULT_PSOS = [
-    ("PSO1", "Professional Skills: Ability to design, develop, and deploy scalable software systems, algorithms, and cloud/edge infrastructure."),
-    ("PSO2", "Industrial Competence: Ability to apply modern frameworks, AI accelerators, real-time data pipelines, and security protocols in enterprise settings."),
-    ("PSO3", "Innovation and Entrepreneurship: Ability to formulate innovative technical solutions addressing societal and interdisciplinary challenges."),
+    ProgramSpecificOutcome(pso_id="PSO1", statement="Professional Skills: Ability to design, develop, and deploy scalable software systems, algorithms, and cloud/edge infrastructure."),
+    ProgramSpecificOutcome(pso_id="PSO2", statement="Industrial Competence: Ability to apply modern frameworks, AI accelerators, real-time data pipelines, and security protocols in enterprise settings."),
+    ProgramSpecificOutcome(pso_id="PSO3", statement="Innovation and Entrepreneurship: Ability to formulate innovative technical solutions addressing societal and interdisciplinary challenges."),
 ]
 
-BLOOM_LEVELS = [
-    ("CO1", "L2: Understand", "Understand and explain foundational concepts, formal representations, and system invariants."),
-    ("CO2", "L3: Apply", "Apply algorithmic techniques, mathematical models, and architectural patterns to solve domain problems."),
-    ("CO3", "L4: Analyze", "Analyze system performance, bottlenecks, failure modes, and trade-offs under varying operational constraints."),
-    ("CO4", "L4: Analyze", "Formulate and analyze modern data workflows, streaming architectures, and distributed coordination."),
-    ("CO5", "L5: Evaluate", "Evaluate enterprise integration strategies, security postures, and cost-performance trade-offs."),
-    ("CO6", "L6: Create", "Design and synthesize an end-to-end, production-grade industry-aligned system integrating cutting-edge tooling."),
+BLOOM_LEVELS_THEORY = [
+    ("CO1", "Cognitive", "L2: Understand", "Understand and explain foundational concepts, formal representations, and system invariants."),
+    ("CO2", "Cognitive", "L3: Apply", "Apply algorithmic techniques, mathematical models, and architectural patterns to solve domain problems."),
+    ("CO3", "Cognitive", "L4: Analyze", "Analyze system performance, bottlenecks, failure modes, and trade-offs under varying operational constraints."),
+    ("CO4", "Cognitive", "L4: Analyze", "Formulate and analyze modern data workflows, streaming architectures, and distributed coordination."),
+    ("CO5", "Cognitive", "L5: Evaluate", "Evaluate enterprise integration strategies, security postures, and cost-performance trade-offs."),
+    ("CO6", "Cognitive", "L6: Create", "Design and synthesize an end-to-end, production-grade industry-aligned system integrating cutting-edge tooling."),
+]
+
+BLOOM_LEVELS_LAB_INTEGRATED = [
+    ("CO1", "Cognitive", "L2: Understand", "Explain the theoretical principles and protocol state machines governing the technology domain."),
+    ("CO2", "Psychomotor", "P2: Manipulation", "Configure, instrument, and operate development toolchains, container runtimes, and local clusters according to technical specifications."),
+    ("CO3", "Cognitive", "L4: Analyze", "Diagnose system failures, benchmark operational bottlenecks, and profile latency profiles under stress."),
+    ("CO4", "Psychomotor", "P3: Precision", "Implement and execute end-to-end automated pipelines, real-time streaming topologies, and API contracts with measurable accuracy."),
+    ("CO5", "Affective", "A3: Valuing", "Adhere to professional engineering standards, open-source compliance, ethical zero-trust postures, and collaborative peer code review."),
+    ("CO6", "Cognitive", "L6: Create", "Synthesize a functional capstone engineering solution incorporating hardware acceleration or production-grade cloud architectures."),
 ]
 
 
@@ -81,10 +91,25 @@ class CurriculumGenerator:
         system_prompt = self._build_system_prompt()
         user_prompt = self._build_user_prompt(rag_context)
 
-        if self.provider == "ollama":
+        # 0. Zero-Auth Auto-Discovery for PARAM Shavak / On-Prem Qwen when model is "auto" or provider is "param_shavak_auto"
+        if self.provider in ["param_shavak_auto", "ollama", "param_shavak", "qwen", "vllm"] and (
+            not self.model or self.model.startswith("auto") or self.provider == "param_shavak_auto"
+        ):
             try:
-                target_model = self.model or settings.OLLAMA_MODEL
-                async with httpx.AsyncClient(timeout=60.0) as client:
+                from backend.app.llm.param_shavak_discovery import auto_discover_param_shavak_async
+                disc = await auto_discover_param_shavak_async(self.ollama_url, preferred_model="qwen")
+                if disc.get("connected"):
+                    self.provider = disc["protocol"]
+                    self.ollama_url = disc["base_url"]
+                    self.model = disc["selected_model"]
+            except Exception as e:
+                logger.debug(f"Auto-discovery skipped: {e}")
+
+        # 1. Ollama or PARAM Shavak Qwen endpoint (Zero-Auth REST /api/generate)
+        if self.provider in ["ollama", "param_shavak", "qwen"]:
+            try:
+                target_model = self.model if (self.model and not self.model.startswith("auto")) else "qwen2.5:14b"
+                async with httpx.AsyncClient(timeout=90.0) as client:
                     resp = await client.post(
                         f"{self.ollama_url}/api/generate",
                         json={
@@ -101,15 +126,17 @@ class CurriculumGenerator:
                         response_text = data.get("response", "")
                         return self._parse_json_safely(response_text)
             except Exception as e:
-                logger.warning(f"Ollama call failed ({e}); falling back to deterministic generation.")
+                logger.warning(f"Ollama/PARAM Shavak call failed ({e}); falling back to deterministic generation.")
 
-        elif self.provider == "openai" and (self.api_key or settings.OPENAI_API_KEY):
+        # 2. OpenAI or vLLM (PARAM Shavak vLLM on port 8000)
+        elif self.provider in ["openai", "vllm"] and (self.api_key or settings.OPENAI_API_KEY or "vllm" in self.provider):
             try:
-                key = self.api_key or settings.OPENAI_API_KEY
-                target_model = self.model or settings.OPENAI_MODEL
-                async with httpx.AsyncClient(timeout=60.0) as client:
+                key = self.api_key or settings.OPENAI_API_KEY or "none"
+                target_model = self.model or "qwen2.5-32b-instruct"
+                base_url = self.ollama_url if "vllm" in self.provider else "https://api.openai.com/v1"
+                async with httpx.AsyncClient(timeout=90.0) as client:
                     resp = await client.post(
-                        "https://api.openai.com/v1/chat/completions",
+                        f"{base_url}/chat/completions",
                         headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
                         json={
                             "model": target_model,
@@ -125,20 +152,19 @@ class CurriculumGenerator:
                         content = resp.json()["choices"][0]["message"]["content"]
                         return self._parse_json_safely(content)
             except Exception as e:
-                logger.warning(f"OpenAI call failed ({e}); falling back to deterministic generation.")
+                logger.warning(f"OpenAI/vLLM call failed ({e}); falling back to deterministic generation.")
 
+        # 3. Google Gemini
         elif self.provider in ["gemini", "google"] and (self.api_key or settings.GEMINI_API_KEY):
             try:
                 key = self.api_key or settings.GEMINI_API_KEY
                 target_model = self.model or settings.GEMINI_MODEL
                 url = f"https://generativelanguage.googleapis.com/v1beta/models/{target_model}:generateContent?key={key}"
                 payload = {
-                    "contents": [{
-                        "parts": [{"text": f"{system_prompt}\n\n{user_prompt}"}]
-                    }],
+                    "contents": [{"parts": [{"text": f"{system_prompt}\n\n{user_prompt}"}]}],
                     "generationConfig": {"response_mime_type": "application/json", "temperature": self.request.temperature}
                 }
-                async with httpx.AsyncClient(timeout=60.0) as client:
+                async with httpx.AsyncClient(timeout=90.0) as client:
                     resp = await client.post(url, json=payload)
                     if resp.status_code == 200:
                         content = resp.json()["candidates"][0]["content"]["parts"][0]["text"]
@@ -149,30 +175,31 @@ class CurriculumGenerator:
         return self._generate_high_fidelity_academic_payload()
 
     def _build_system_prompt(self) -> str:
+        course_type = getattr(self.meta, "course_type", "Integrated")
         return (
-            "You are an expert academic curriculum designer and NBA/AICTE Accreditation Reviewer. "
-            "Your task is to generate a rigorous, industry-integrated engineering course syllabus. "
+            "You are an expert academic curriculum architect and NBA/AICTE Accreditation Reviewer. "
+            "Generate an outcome-based course syllabus compliant with Indian engineering standards. "
+            f"Course Type: {course_type}.\n"
             "Constraints:\n"
-            "1. Modules 1-3 MUST establish rigorous theoretical and mathematical foundations.\n"
-            "2. Modules 4-6 MUST integrate modern industry tools, cloud/edge platforms, and architectures.\n"
-            "3. Formulate 6 Course Outcomes (CO1-CO6) aligned strictly with Bloom's Revised Taxonomy (L1 to L6).\n"
-            "4. Total contact hours across modules MUST sum to the exact specified Total Contact Hours.\n"
-            "5. Generate a CO-PO and CO-PSO correlation matrix with weights 1 (Slight), 2 (Moderate), 3 (Substantial).\n"
-            "6. Output MUST be valid JSON only without markdown ticks."
+            "1. Multi-Domain Bloom's Taxonomy: If the course has practical/lab components, include both Cognitive (L1-L6) and Psychomotor (P1-P5) outcomes, and optionally Affective (A1-A5).\n"
+            "2. Theory vs Industry progression: Modules 1-3 MUST establish fundamental theory and algorithms. Modules 4-6 MUST integrate trending industry tools.\n"
+            "3. Enforce hour balance: Total contact hours across modules must equal exactly the specified Total Contact Hours.\n"
+            "4. Output MUST be valid JSON only without markdown code ticks."
         )
 
     def _build_user_prompt(self, rag_context: str) -> str:
+        num_cos = getattr(self.request, "num_cos", 6)
+        num_mods = getattr(self.request, "num_modules", 5)
         return (
-            f"Generate an NBA-compliant curriculum for:\n"
-            f"Course Name: {self.meta.course_name}\n"
-            f"Course Code: {self.meta.course_code}\n"
-            f"Department: {self.meta.department}\n"
+            f"Generate curriculum for:\n"
+            f"Course Name: {self.meta.course_name} ({self.meta.course_code})\n"
+            f"Course Type: {getattr(self.meta, 'course_type', 'Theory + Lab')}\n"
             f"Credits (L-T-P-C): {self.meta.credits_l}-{self.meta.credits_t}-{self.meta.credits_p}-{self.meta.credits_c}\n"
             f"Total Contact Hours: {self.meta.total_contact_hours}\n"
-            f"Scheme: {self.meta.scheme}\n"
-            f"Number of Modules: {self.request.num_modules}\n"
-            f"Novel Industry Topics to Inject: {self.request.industry_topics}\n\n"
-            f"Reference Retrieval Context:\n{rag_context}\n"
+            f"Number of Modules: {num_mods}\n"
+            f"Number of Course Outcomes: {num_cos}\n"
+            f"Industry Topics: {self.request.industry_topics}\n\n"
+            f"Reference Context:\n{rag_context}\n"
         )
 
     def _parse_json_safely(self, text: str) -> Dict[str, Any]:
@@ -191,33 +218,40 @@ class CurriculumGenerator:
         return hours
 
     def _post_process_and_balance(self, data: Dict[str, Any]) -> CurriculumCreate:
-        num_mods = self.request.num_modules
+        num_mods = getattr(self.request, "num_modules", 5)
+        num_cos = getattr(self.request, "num_cos", 6)
         total_hours = self.meta.total_contact_hours
         balanced_hours = self._balance_module_hours(num_mods, total_hours)
+        is_lab = "lab" in getattr(self.meta, "course_type", "").lower() or "practical" in getattr(self.meta, "course_type", "").lower()
 
+        # 1. Course Outcomes (Cognitive, Psychomotor, Affective)
         cos: List[CourseOutcome] = []
         raw_cos = data.get("course_outcomes", [])
-        if raw_cos and len(raw_cos) >= 4:
-            for idx, c in enumerate(raw_cos[:6]):
-                cos.append(
-                    CourseOutcome(
-                        co_id=c.get("co_id", f"CO{idx+1}"),
-                        description=c.get("description", f"Master core competencies for {self.meta.course_name}"),
-                        bloom_level=c.get("bloom_level", BLOOM_LEVELS[idx][1]),
-                        target_attainment_pct=float(c.get("target_attainment_pct", 70.0))
-                    )
-                )
-        else:
-            for co_id, bloom, desc in BLOOM_LEVELS:
-                cos.append(
-                    CourseOutcome(
-                        co_id=co_id,
-                        description=f"{desc.split(':')[0]} and demonstrate {self.meta.course_name} techniques.",
-                        bloom_level=bloom,
-                        target_attainment_pct=70.0
-                    )
-                )
+        
+        template_levels = BLOOM_LEVELS_LAB_INTEGRATED if is_lab else BLOOM_LEVELS_THEORY
 
+        for idx in range(num_cos):
+            co_id = f"CO{idx + 1}"
+            if idx < len(raw_cos):
+                item = raw_cos[idx]
+                cos.append(CourseOutcome(
+                    co_id=co_id,
+                    description=item.get("description", f"Demonstrate mastery in {self.meta.course_name}"),
+                    domain=item.get("domain", template_levels[idx % len(template_levels)][1]),
+                    bloom_level=item.get("bloom_level", template_levels[idx % len(template_levels)][2]),
+                    target_attainment_pct=float(item.get("target_attainment_pct", 70.0))
+                ))
+            else:
+                tmpl = template_levels[idx % len(template_levels)]
+                cos.append(CourseOutcome(
+                    co_id=co_id,
+                    description=f"{tmpl[3]} in the context of {self.meta.course_name}.",
+                    domain=tmpl[1],
+                    bloom_level=tmpl[2],
+                    target_attainment_pct=70.0
+                ))
+
+        # 2. Modules
         modules: List[ModuleTopic] = []
         raw_mods = data.get("modules", [])
         ind_tags = [t.strip() for t in (self.request.industry_topics or "").split(",") if t.strip()]
@@ -229,8 +263,8 @@ class CurriculumGenerator:
 
             if i < len(raw_mods):
                 m_item = raw_mods[i]
-                title = m_item.get("title", f"Module {mod_num}: Advanced Study")
-                topics = m_item.get("topics", [f"Fundamental topics of unit {mod_num}"])
+                title = m_item.get("title", f"Module {mod_num}: In-Depth Domain Study")
+                topics = m_item.get("topics", [f"Core syllabus topics for Unit {mod_num}"])
                 cog = m_item.get("cognitive_level", "L2-L3" if mod_num <= 3 else "L4-L6")
             else:
                 title, topics, cog = self._get_default_module_topics(mod_num, self.meta.course_name, ind_tags)
@@ -240,60 +274,40 @@ class CurriculumGenerator:
                 sub_tags = ind_tags[(mod_num - 4) * 2 : (mod_num - 3) * 2]
                 mod_ind_tags = sub_tags if sub_tags else ind_tags[:2]
 
-            modules.append(
-                ModuleTopic(
-                    module_number=mod_num,
-                    title=title,
-                    contact_hours=allocated_h,
-                    weightage_pct=weightage,
-                    cognitive_level=cog,
-                    topics=topics,
-                    industry_integration_tags=mod_ind_tags
-                )
-            )
+            modules.append(ModuleTopic(
+                module_number=mod_num,
+                title=title,
+                contact_hours=allocated_h,
+                weightage_pct=weightage,
+                cognitive_level=cog,
+                topics=topics,
+                industry_integration_tags=mod_ind_tags
+            ))
 
+        # 3. PSOs & Articulation Matrix
+        active_psos = self.meta.psos if self.meta.psos else DEFAULT_PSOS
         articulation_matrix: List[ArticulationCell] = []
-        raw_matrix = data.get("articulation_matrix", [])
-        if raw_matrix:
-            for cell in raw_matrix:
-                articulation_matrix.append(
-                    ArticulationCell(
-                        co_id=cell.get("co_id", "CO1"),
-                        target_id=cell.get("target_id", "PO1"),
-                        correlation_level=int(cell.get("correlation_level", 2)),
-                        rationale=cell.get("rationale")
-                    )
-                )
-        else:
-            for co in cos:
-                co_num = int(co.co_id.replace("CO", ""))
-                for po_id, _ in NBA_PROGRAM_OUTCOMES:
-                    po_num = int(po_id.replace("PO", ""))
-                    corr = 0
-                    if po_num == 1:
-                        corr = 3
-                    elif po_num == 2 and co_num >= 2:
-                        corr = 3 if co_num >= 3 else 2
-                    elif po_num == 3 and co_num >= 4:
-                        corr = 3 if co_num == 6 else 2
-                    elif po_num == 4 and co_num in [3, 4, 5]:
-                        corr = 2
-                    elif po_num == 5 and co_num >= 3:
-                        corr = 3
-                    elif po_num == 12:
-                        corr = 2
-                    elif po_num in [9, 10] and co_num == 6:
-                        corr = 2
+        
+        for co in cos:
+            co_num = int(re.sub(r"\D", "", co.co_id) or "1")
+            for po_id, _ in NBA_PROGRAM_OUTCOMES:
+                po_num = int(po_id.replace("PO", ""))
+                corr = 0
+                if po_num == 1: corr = 3
+                elif po_num == 2 and co_num >= 2: corr = 3 if co_num >= 3 else 2
+                elif po_num == 3 and co_num >= 3: corr = 3 if co_num >= 5 else 2
+                elif po_num == 4 and (co.domain == "Psychomotor" or co_num in [3, 4]): corr = 3 if is_lab else 2
+                elif po_num == 5 and (co_num >= 3 or co.domain == "Psychomotor"): corr = 3  # Modern tools
+                elif po_num == 8 and co.domain == "Affective": corr = 3  # Ethics
+                elif po_num in [9, 10] and (co.domain == "Affective" or co_num == num_cos): corr = 2  # Teamwork
+                elif po_num == 12: corr = 2
+                articulation_matrix.append(ArticulationCell(co_id=co.co_id, target_id=po_id, correlation_level=corr))
 
-                    articulation_matrix.append(
-                        ArticulationCell(co_id=co.co_id, target_id=po_id, correlation_level=corr)
-                    )
-                for pso_id, _ in DEFAULT_PSOS:
-                    pso_corr = 3 if co_num >= 4 else 2
-                    articulation_matrix.append(
-                        ArticulationCell(co_id=co.co_id, target_id=pso_id, correlation_level=pso_corr)
-                    )
+            for pso in active_psos:
+                pso_corr = 3 if co_num >= 3 else 2
+                articulation_matrix.append(ArticulationCell(co_id=co.co_id, target_id=pso.pso_id, correlation_level=pso_corr))
 
+        # 4. Textbooks & References
         textbooks = [
             BookCitation(
                 book_type="Textbook",
@@ -335,17 +349,20 @@ class CurriculumGenerator:
             )
         ]
 
+        # 5. Assessment Scheme Breakdown (CIA, MSE, CIAP, ESE, ESEP, SLA)
         assessment = AssessmentScheme(
-            cie_marks=50,
-            see_marks=50,
-            total_marks=100,
-            continuous_tests_marks=30,
-            quizzes_assignments_marks=20,
-            see_duration_hours=3,
+            cia_marks=20,
+            mse_marks=30,
+            ciap_marks=25,
+            ese_marks=50,
+            esep_marks=25,
+            sla_marks=20,
+            total_marks=170,
+            passing_threshold_pct=40.0,
             rubrics_summary=(
-                "Continuous Internal Evaluation (CIE) consists of 2 written tests (30 Marks) "
-                "and hands-on assignments/quizzes (20 Marks). Semester End Examination (SEE) is a 3-hour "
-                "written comprehensive evaluation carrying 50 Marks with questions from all 5 modules."
+                "Evaluation adheres to NBA/AICTE accreditation guidelines: Theory continuous evaluation consists of CIA (20 Marks) "
+                "and MSE (30 Marks). Practical lab competence is evaluated via CIAP (25 Marks) and ESEP (25 Marks). Comprehensive "
+                "end-semester written examination ESE carries 50 Marks, and Self-Learning Assessment (SLA / Capstone Mini-project) carries 20 Marks."
             )
         )
 
@@ -434,9 +451,11 @@ class CurriculumGenerator:
             )
 
     def _generate_high_fidelity_academic_payload(self) -> Dict[str, Any]:
-        num_mods = self.request.num_modules
+        num_mods = getattr(self.request, "num_modules", 5)
+        num_cos = getattr(self.request, "num_cos", 6)
         balanced_hours = self._balance_module_hours(num_mods, self.meta.total_contact_hours)
         ind_tags = [t.strip() for t in (self.request.industry_topics or "").split(",") if t.strip()]
+        is_lab = "lab" in getattr(self.meta, "course_type", "").lower() or "practical" in getattr(self.meta, "course_type", "").lower()
 
         modules_data = []
         for i in range(num_mods):
@@ -450,10 +469,18 @@ class CurriculumGenerator:
                 "topics": topics
             })
 
+        template_levels = BLOOM_LEVELS_LAB_INTEGRATED if is_lab else BLOOM_LEVELS_THEORY
+        cos_data = []
+        for i in range(num_cos):
+            tmpl = template_levels[i % len(template_levels)]
+            cos_data.append({
+                "co_id": f"CO{i+1}",
+                "domain": tmpl[1],
+                "bloom_level": tmpl[2],
+                "description": f"{tmpl[3]} for {self.meta.course_name}."
+            })
+
         return {
-            "course_outcomes": [
-                {"co_id": co_id, "bloom_level": bloom, "description": f"{desc.split(':')[0]} and formulate engineering solutions for {self.meta.course_name}."}
-                for co_id, bloom, desc in BLOOM_LEVELS
-            ],
+            "course_outcomes": cos_data,
             "modules": modules_data
         }

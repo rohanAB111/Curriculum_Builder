@@ -1,0 +1,21 @@
+"For the best editing experience, upload this .csv as a rubric in Microsoft Teams."
+
+"22CS501 - 25.8 Reel / Blog / Skit Activity Rubric (7 Criteria - Group & Peer Voting)","100"
+""
+""
+,"","4","","3","","2","","1"
+"Clarity of Concept (GA)","Concept is clearly explained with accurate examples and appropriate interpretation.",,"Concept is clearly explained with relevant information.",,"Concept explanation is inadequate or lacks clarity.",,"Concept explanation is incorrect or demonstrates misunderstanding.",
+"30"
+"Creativity & Engagement (GA)","Highly creative, visually appealing, and strongly engaging presentation.",,"Creative approach with moderate engagement and visualization.",,"Basic visualization with limited creativity.",,"Dull or ineffective visualization with poor engagement.",
+"15"
+"Technical Content (Code/Logic) (GA)","Relevant code and logic are correctly used with proper comments, structure, and indentation.",,"Correct code and logic are used but comments or indentation require improvement.",,"Code addresses some conditions but does not completely satisfy all requirements.",,"Poor code quality; code does not execute or fails to address basic conditions.",
+"15"
+"Communication & Presentation (GA)","Smooth, confident, and audience-friendly communication.",,"Clear communication with minor hesitation.",,"Basic effort in communication and presentation.",,"Low effort with ineffective communication.",
+"15"
+"Real-world Connection / Metaphor (GA)","Strong metaphor or real-world scenario is used to explain the concept effectively.",,"Good connection with a scenario, but some conditions or scope limitations are missing.",,"Basic connection is demonstrated but scope is unclear.",,"Connection is irrelevant or missing.",
+"15"
+"Team Collaboration (IA)","All members contribute effectively, demonstrate coordination, and support each other throughout the activity.",,"Most members contribute and coordinate effectively with minor gaps.",,"Limited collaboration with uneven participation.",,"Poor collaboration and minimal team involvement.",
+"5"
+"Peer Voting (IA)","Highly appreciated by peers for content quality, creativity, communication, and overall impact.",,"Received positive peer feedback with good overall performance.",,"Moderate peer appreciation with scope for improvement.",,"Limited peer appreciation and low overall impact.",
+"5"
+v.11p

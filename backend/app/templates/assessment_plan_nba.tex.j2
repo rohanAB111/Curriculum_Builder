@@ -1,0 +1,163 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[top=0.75in, bottom=0.75in, left=0.75in, right=0.75in]{geometry}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{fancyhdr}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage[hidelinks]{hyperref}
+
+\definecolor{nbaNavy}{RGB}{22, 54, 105}
+\definecolor{nbaSlate}{RGB}{70, 80, 95}
+\definecolor{nbaHighlight}{RGB}{220, 75, 45}
+\definecolor{tableHeaderBg}{RGB}{235, 242, 250}
+\definecolor{rubricExemplary}{RGB}{230, 245, 230}
+
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\newcolumntype{Z}{>{\centering\arraybackslash}X}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0.6pt}
+\renewcommand{\footrulewidth}{0.4pt}
+\fancyhead[L]{\footnotesize\textbf{\color{nbaNavy}SHAH \& ANCHOR KUTCHHI ENGINEERING COLLEGE (AUTONOMOUS)}}
+\fancyhead[R]{\footnotesize\color{nbaSlate}\VAR{ meta.course_code } \textbullet\ SAKEC OBE Manual V3.0}
+\fancyfoot[L]{\footnotesize\color{nbaSlate}Developed by Dr. Rohan Borgalli \textbullet\ CurriculumAI Studio -- SAKEC OBE Portal (\url{https://www.sakec.ac.in/})}
+\fancyfoot[R]{\footnotesize\textbf{Page \thepage}}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{4pt}
+
+\begin{document}
+
+\begin{center}
+    {\footnotesize\textbf{\color{nbaSlate}Mahavir Education Trust's}}\\[1pt]
+    {\Large\textbf{\color{nbaNavy}SHAH \& ANCHOR KUTCHHI ENGINEERING COLLEGE}}\\[2pt]
+    {\footnotesize\textbf{An Autonomous Institute Affiliated to University of Mumbai \textbullet\ Approved by AICTE, New Delhi \& Govt. of Maharashtra}}\\[1pt]
+    {\scriptsize\color{nbaSlate}NAAC Accredited `A' Grade (3.16 CGPA) \textbullet\ NBA Accredited UG Programs (Comp. Engg., IT, EXTC) \textbullet\ ISO 9001:2015 \textbullet\ DTE Institute Code: 3148}\\[1pt]
+    {\scriptsize\color{nbaSlate}Mahavir Education Trust's Chowk, W. T. Patil Marg, Next to Duke's Co., Chembur, Mumbai -- 400 088 \textbullet\ Tel: 022-25580854 \textbullet\ \url{https://www.sakec.ac.in/}}\\[4pt]
+    \rule{\linewidth}{1.2pt}\\[3pt]
+    {\normalsize\textbf{\color{nbaNavy}DEPARTMENT OF \VAR{ meta.department | upper }}}\\[2pt]
+    {\small\textbf{\color{nbaSlate}SAKEC OBE MANUAL VERSION 3.0 -- ASSESSMENT METHODOLOGY \& RUBRICS DOSSIER}}\\[1pt]
+    {\footnotesize\textbf{Course: \VAR{ meta.course_name } (\VAR{ meta.course_code }) \textbullet\ Academic Year: \VAR{ meta.academic_year } \textbullet\ Semester: \VAR{ meta.semester }}}\\[2pt]
+    \rule{\linewidth}{0.6pt}
+\end{center}
+
+\vspace{-4pt}
+
+% -----------------------------------------------------------------------------
+% 1. ASSESSMENT ARCHITECTURE OVERVIEW
+% -----------------------------------------------------------------------------
+{\large\textbf{\color{nbaNavy}1. Comprehensive Assessment Architecture}}
+
+\begin{table}[h!]
+\centering
+\small
+\rowcolors{1}{white}{tableHeaderBg}
+\begin{tabularx}{\textwidth}{L{2.5cm} C{1.8cm} C{2.2cm} Y}
+\toprule
+\textbf{Component} & \textbf{Code} & \textbf{Allocated Marks} & \textbf{Pedagogical Methodologies Selected} \\
+\midrule
+\BLOCK{ for comp in components }
+\textbf{\VAR{ comp.component_name }} & \textbf{\VAR{ comp.component_code }} & \textbf{\VAR{ comp.allocated_marks } Marks} & \VAR{ comp.selected_methods | join(', ') } \\
+\BLOCK{ endfor }
+\midrule
+\rowcolor{tableHeaderBg}
+\textbf{Total Assessment} & \textbf{TOTAL} & \textbf{\VAR{ total_marks } Marks} & \textbf{Aggregate Passing Criterion: 40\% Marks} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+% -----------------------------------------------------------------------------
+% 2. COMPONENT-WISE ACTIVITY DESIGN & FACULTY GUIDELINES
+% -----------------------------------------------------------------------------
+\vspace{6pt}
+{\large\textbf{\color{nbaNavy}2. Component-Wise Activity Guidelines \& Student Deliverables}}
+
+\BLOCK{ for comp in components }
+\vspace{4pt}
+\begin{table}[h!]
+\centering
+\small
+\begin{tabularx}{\textwidth}{L{3.2cm} Y}
+\toprule
+\rowcolor{tableHeaderBg}
+\multicolumn{2}{l}{\textbf{\color{nbaNavy}\VAR{ comp.component_code }: \VAR{ comp.component_name }} \hfill \textbf{Marks: \VAR{ comp.allocated_marks }} \quad \textbf{Target COs: \VAR{ comp.target_cos | join(', ') }}} \\
+\midrule
+\textbf{Bloom's Level Focus:} & \VAR{ comp.bloom_focus } \\
+\textbf{Activity Description:} & \VAR{ comp.activity_description } \\
+\textbf{Faculty Guidelines:} & \VAR{ comp.faculty_guidelines } \\
+\textbf{Student Deliverables:} & \VAR{ comp.student_deliverables } \\
+\bottomrule
+\end{tabularx}
+\end{table}
+\BLOCK{ endfor }
+
+% -----------------------------------------------------------------------------
+% 3. AICTE/NBA 4-LEVEL ANALYTIC RUBRICS
+% -----------------------------------------------------------------------------
+\vspace{6pt}
+{\large\textbf{\color{nbaNavy}3. AICTE 4-Level Performance Evaluation Rubrics}}
+
+\BLOCK{ for comp in components }
+\BLOCK{ if comp.rubric_criteria }
+\vspace{4pt}
+{\normalsize\textbf{\color{nbaNavy}Rubric for \VAR{ comp.component_code } (\VAR{ comp.component_name })}}
+\begin{table}[h!]
+\centering
+\footnotesize
+\begin{tabularx}{\textwidth}{L{2.8cm} Y Y Y Y}
+\toprule
+\rowcolor{tableHeaderBg}
+\textbf{Evaluation Criterion} & \textbf{Exemplary (Level 4)} & \textbf{Proficient (Level 3)} & \textbf{Developing (Level 2)} & \textbf{Novice (Level 1)} \\
+\midrule
+\BLOCK{ for rub in comp.rubric_criteria }
+\textbf{\VAR{ rub.criterion }} & \VAR{ rub.exemplary_4 } & \VAR{ rub.proficient_3 } & \VAR{ rub.developing_2 } & \VAR{ rub.novice_1 } \\
+\BLOCK{ if not loop.last } \hline \BLOCK{ endif }
+\BLOCK{ endfor }
+\bottomrule
+\end{tabularx}
+\end{table}
+\BLOCK{ endif }
+\BLOCK{ endfor }
+
+% -----------------------------------------------------------------------------
+% 4. ATTAINMENT CALCULATION FORMULATION
+% -----------------------------------------------------------------------------
+\vspace{6pt}
+{\large\textbf{\color{nbaNavy}4. Course Outcome Attainment Calculation Formulation}}
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabularx}{\textwidth}{Y}
+\toprule
+\rowcolor{tableHeaderBg}
+\textbf{NBA Direct Attainment Formula} \\
+\midrule
+\VAR{ attainment_methodology } \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\vspace{16pt}
+\begin{table}[h!]
+\centering
+\begin{tabularx}{\textwidth}{Z Z Z}
+\toprule
+\vspace{18pt} & \vspace{18pt} & \vspace{18pt} \\
+\textbf{Course Coordinator (Faculty)} & \textbf{Head of Department (HOD)} & \textbf{Dr. Bhavesh Patel (Principal)} \\
+\textit{Prepared for Course File} & \textit{Dept. of \VAR{ meta.department }, SAKEC} & \textit{Shah \& Anchor Kutchhi Engg. College} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+\begin{center}
+{\scriptsize\color{nbaSlate}\textit{System Platform Engineered \& Developed by \textbf{Dr. Rohan Borgalli}, Shah \& Anchor Kutchhi Engineering College, Mumbai (\url{https://www.sakec.ac.in/}).}}
+\end{center}
+
+\end{document}

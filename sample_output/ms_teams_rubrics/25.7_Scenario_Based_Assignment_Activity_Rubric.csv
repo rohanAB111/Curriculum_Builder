@@ -1,0 +1,15 @@
+"For the best editing experience, upload this .csv as a rubric in Microsoft Teams."
+
+"22CS501 - 25.7 Scenario-Based Assignment Activity Rubric","100"
+""
+""
+,"","4","","3","","2","","1"
+"Understanding of Scenario/Problem Context","Demonstrates clear understanding of the given scenario/problem; correctly identifies key issues, constraints, and objectives.",,"Demonstrates good understanding; identifies most relevant aspects of the scenario.",,"Shows basic understanding; identifies some key elements.",,"Shows minimal understanding; fails to identify key elements of the scenario.",
+"20"
+"Analysis & Application of Concepts","Applies relevant technical/engineering knowledge to analyze the scenario; demonstrates logical reasoning and may include diagrams, calculations, or references.",,"Applies mostly relevant technical knowledge with minor errors or gaps.",,"Applies basic or partially relevant concepts; analysis is present but limited in clarity.",,"Analysis is weak, incomplete, or mostly incorrect.",
+"30"
+"Solution / Decision-Making & Justification","Provides a feasible and well-thought-out solution; justifies the approach using data, theory, or best practices.",,"Provides a valid solution; justification lacks strong supporting evidence.",,"Provides a basic or partially feasible solution; justification is weak.",,"Provides a vague, unclear, or impractical solution with little to no justification.",
+"30"
+"Report / Assignment Quality","Clear, concise, and well-organized report demonstrating effective presentation of ideas.",,"Report is generally well-written but may lack clarity or organization.",,"Report lacks clarity or organization.",,"Poorly written report with inadequate presentation.",
+"20"
+v.11p

@@ -1,0 +1,304 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[top=0.75in, bottom=0.75in, left=0.75in, right=0.75in]{geometry}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{fancyhdr}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage[hidelinks]{hyperref}
+
+\definecolor{nbaNavy}{RGB}{22, 54, 105}
+\definecolor{nbaSlate}{RGB}{70, 80, 95}
+\definecolor{nbaHighlight}{RGB}{220, 75, 45}
+\definecolor{tableHeaderBg}{RGB}{235, 242, 250}
+\definecolor{rubricExemplary}{RGB}{230, 245, 230}
+
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\newcolumntype{Z}{>{\centering\arraybackslash}X}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0.6pt}
+\renewcommand{\footrulewidth}{0.4pt}
+\fancyhead[L]{\small\textbf{\color{nbaNavy}COURSE ASSESSMENT \& RUBRICS PLAN (OBE DOSSIER)}}
+\fancyhead[R]{\small\color{nbaSlate}22CS501 - 2025-26}
+\fancyfoot[L]{\footnotesize\color{nbaSlate}AICTE Examination Reforms \textbullet\ NBA Accreditation Dossier}
+\fancyfoot[R]{\footnotesize\textbf{\thepage}}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{4pt}
+
+\begin{document}
+
+\begin{center}
+    {\large\textbf{\color{nbaNavy}DEPARTMENT OF COMPUTER SCIENCE \& ENGINEERING}}\\[2pt]
+    {\normalsize\textbf{\color{nbaSlate}OUTCOME-BASED ASSESSMENT METHODOLOGY \& RUBRICS SPECIFICATION}}\\[2pt]
+    {\footnotesize\textbf{Course: Cloud-Native Distributed Systems \& Microservices (22CS501) \textbullet\ Semester: V}}\\[4pt]
+    \rule{\linewidth}{1.2pt}
+\end{center}
+
+\vspace{-4pt}
+
+% -----------------------------------------------------------------------------
+% 1. ASSESSMENT ARCHITECTURE OVERVIEW
+% -----------------------------------------------------------------------------
+{\large\textbf{\color{nbaNavy}1. Comprehensive Assessment Architecture}}
+
+\begin{table}[h!]
+\centering
+\small
+\rowcolors{1}{white}{tableHeaderBg}
+\begin{tabularx}{\textwidth}{L{2.5cm} C{1.8cm} C{2.2cm} Y}
+\toprule
+\textbf{Component} & \textbf{Code} & \textbf{Allocated Marks} & \textbf{Pedagogical Methodologies Selected} \\
+\midrule
+\textbf{Continuous Internal Assessment (Theory)} & \textbf{CIA} & \textbf{20 Marks} & Technical Reel Explainer (60s), Cloud Outage Case Study Analysis \\
+\textbf{Mid-Semester Examination (Theory)} & \textbf{MSE} & \textbf{30 Marks} & Higher-Order Thinking Questions (HOTS), System Bottleneck Scenario Paper \\
+\textbf{Continuous Internal Assessment for Practical / Lab} & \textbf{CIAP} & \textbf{25 Marks} & Continuous Lab Experiment Audit, Live Code Debugging Challenge \\
+\textbf{End-Semester Examination (Theory)} & \textbf{ESE} & \textbf{50 Marks} & Comprehensive Theory Exam Blueprint, Bloom's Balanced Part A \& B Question Paper \\
+\textbf{End-Semester Practical \& Oral Examination} & \textbf{ESEP} & \textbf{25 Marks} & Hands-on System Demonstration, External Viva-Voce Examination \\
+\textbf{Self-Learning Assessment (SLA)} & \textbf{SLA} & \textbf{20 Marks} & NPTEL / MOOC Certification Audit, Capstone Open-Source Mini-Project \\
+\midrule
+\rowcolor{tableHeaderBg}
+\textbf{Total Assessment} & \textbf{TOTAL} & \textbf{170 Marks} & \textbf{Aggregate Passing Criterion: 40\% Marks} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+% -----------------------------------------------------------------------------
+% 2. COMPONENT-WISE ACTIVITY DESIGN & FACULTY GUIDELINES
+% -----------------------------------------------------------------------------
+\vspace{6pt}
+{\large\textbf{\color{nbaNavy}2. Component-Wise Activity Guidelines \& Student Deliverables}}
+
+\vspace{4pt}
+\begin{table}[h!]
+\centering
+\small
+\begin{tabularx}{\textwidth}{L{3.2cm} Y}
+\toprule
+\rowcolor{tableHeaderBg}
+\multicolumn{2}{l}{\textbf{\color{nbaNavy}CIA: Continuous Internal Assessment (Theory)} \hfill \textbf{Marks: 20} \quad \textbf{Target COs: CO1, CO2}} \\
+\midrule
+\textbf{Bloom's Level Focus:} & Cognitive: L3 (Apply) \& L4 (Analyze) \\
+\textbf{Activity Description:} & Activity 1: 60-Second Byte-Sized Technical Reel explaining distributed state synchronization or consensus.
+Activity 2: Deep-dive real-world failure case study on cloud infrastructure outages (e.g. Netflix, AWS, CrowdStrike). \\
+\textbf{Faculty Guidelines:} & Administer Activity 1 by Week 4 and Activity 2 by Week 8. Distribute students in pairs. Reels must be vetted for technical accuracy, zero jargon hallucinations, and clear voiceover explanation. \\
+\textbf{Student Deliverables:} & MP4 video file (60-90s) + 2-page case study executive briefing with architectural topology diagram. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+\vspace{4pt}
+\begin{table}[h!]
+\centering
+\small
+\begin{tabularx}{\textwidth}{L{3.2cm} Y}
+\toprule
+\rowcolor{tableHeaderBg}
+\multicolumn{2}{l}{\textbf{\color{nbaNavy}MSE: Mid-Semester Examination (Theory)} \hfill \textbf{Marks: 30} \quad \textbf{Target COs: CO1, CO2, CO3}} \\
+\midrule
+\textbf{Bloom's Level Focus:} & Cognitive: L2 (Understand) to L4 (Analyze) \\
+\textbf{Activity Description:} & 1.5-Hour centralized written examination evaluating foundational consensus algorithms, partition tolerance, and formal invariant proofs. Question paper structured with 20\% L2, 40\% L3, and 40\% L4 questions with no direct textbook reproductions. \\
+\textbf{Faculty Guidelines:} & Prepare question paper blueprint ensuring explicit CO-PO mapping for every question and model solution keys before the test. \\
+\textbf{Student Deliverables:} & Written examination script answering Higher-Order Thinking Questions (HOTS). \\
+\bottomrule
+\end{tabularx}
+\end{table}
+\vspace{4pt}
+\begin{table}[h!]
+\centering
+\small
+\begin{tabularx}{\textwidth}{L{3.2cm} Y}
+\toprule
+\rowcolor{tableHeaderBg}
+\multicolumn{2}{l}{\textbf{\color{nbaNavy}CIAP: Continuous Internal Assessment for Practical / Lab} \hfill \textbf{Marks: 25} \quad \textbf{Target COs: CO2, CO4}} \\
+\midrule
+\textbf{Bloom's Level Focus:} & Psychomotor: P2 (Manipulation) \& P3 (Precision) \\
+\textbf{Activity Description:} & Continuous lab experiment evaluation: Students implement containerized microservices, configure Kafka event pipelines, and submit reproducible code to a dedicated GitHub repository. Lab performance audited on git commit cadence and automated tests. \\
+\textbf{Faculty Guidelines:} & Evaluate students immediately at the conclusion of each weekly 2-hour lab slot using a 5-point analytic check matrix. \\
+\textbf{Student Deliverables:} & Working source code in GitHub repo, Dockerfile, live runtime verification output, and experiment logbook entry. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+\vspace{4pt}
+\begin{table}[h!]
+\centering
+\small
+\begin{tabularx}{\textwidth}{L{3.2cm} Y}
+\toprule
+\rowcolor{tableHeaderBg}
+\multicolumn{2}{l}{\textbf{\color{nbaNavy}ESE: End-Semester Examination (Theory)} \hfill \textbf{Marks: 50} \quad \textbf{Target COs: CO1, CO2, CO3, CO4, CO5, CO6}} \\
+\midrule
+\textbf{Bloom's Level Focus:} & Comprehensive Cognitive: L2 to L6 \\
+\textbf{Activity Description:} & 3-Hour comprehensive examination encompassing all 5 modules. Part A comprises 5 conceptual questions (10 marks). Part B comprises 5 analytical design and architectural evaluation problems with internal module choice (40 marks). \\
+\textbf{Faculty Guidelines:} & Adhere strictly to AICTE Model Question Paper Setting guidelines. Ensure each module carries balanced mark distribution. \\
+\textbf{Student Deliverables:} & Comprehensive written answer script demonstrating architectural synthesis and analytical evaluation. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+\vspace{4pt}
+\begin{table}[h!]
+\centering
+\small
+\begin{tabularx}{\textwidth}{L{3.2cm} Y}
+\toprule
+\rowcolor{tableHeaderBg}
+\multicolumn{2}{l}{\textbf{\color{nbaNavy}ESEP: End-Semester Practical \& Oral Examination} \hfill \textbf{Marks: 25} \quad \textbf{Target COs: CO4, CO6}} \\
+\midrule
+\textbf{Bloom's Level Focus:} & Psychomotor: P4 (Articulation) \& Cognitive L6 (Create) \\
+\textbf{Activity Description:} & Hands-on live deployment and external oral viva-voce examination. Students deploy their microservice clusters on live sandbox nodes, demonstrate fault injection recovery, and defend architectural design trade-offs before an external academic examiner. \\
+\textbf{Faculty Guidelines:} & Joint evaluation conducted by Internal Faculty In-Charge and Appointed External Academic / Industry Examiner. \\
+\textbf{Student Deliverables:} & Live system deployment, real-time debugging demonstration, and oral defense of system invariants. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+\vspace{4pt}
+\begin{table}[h!]
+\centering
+\small
+\begin{tabularx}{\textwidth}{L{3.2cm} Y}
+\toprule
+\rowcolor{tableHeaderBg}
+\multicolumn{2}{l}{\textbf{\color{nbaNavy}SLA: Self-Learning Assessment (SLA)} \hfill \textbf{Marks: 20} \quad \textbf{Target COs: CO5, CO6}} \\
+\midrule
+\textbf{Bloom's Level Focus:} & Cognitive L5-L6 \& Affective A3 (Valuing) \\
+\textbf{Activity Description:} & Option A: 8-Week NPTEL / SWAYAM / Coursera technical certification completion with proctored exam score.
+Option B: Open-source tool benchmarking capstone project (e.g. benchmarking vLLM vs TensorRT-LLM on GPU clusters). \\
+\textbf{Faculty Guidelines:} & Approve student SLA proposals by Week 3. Monitor mid-term progress at Week 9. Final defense in Week 13. \\
+\textbf{Student Deliverables:} & Proctored course certificate or published GitHub benchmark repository with technical documentation. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+% -----------------------------------------------------------------------------
+% 3. AICTE/NBA 4-LEVEL ANALYTIC RUBRICS
+% -----------------------------------------------------------------------------
+\vspace{6pt}
+{\large\textbf{\color{nbaNavy}3. AICTE 4-Level Performance Evaluation Rubrics}}
+
+\vspace{4pt}
+{\normalsize\textbf{\color{nbaNavy}Rubric for CIA (Continuous Internal Assessment (Theory))}}
+\begin{table}[h!]
+\centering
+\footnotesize
+\begin{tabularx}{\textwidth}{L{2.8cm} Y Y Y Y}
+\toprule
+\rowcolor{tableHeaderBg}
+\textbf{Evaluation Criterion} & \textbf{Exemplary (Level 4)} & \textbf{Proficient (Level 3)} & \textbf{Developing (Level 2)} & \textbf{Novice (Level 1)} \\
+\midrule
+\textbf{Technical Accuracy \& Depth} & In-depth mathematical/system grasp; zero inaccuracies; covers boundary cases. & Accurate conceptual explanation; minor secondary omission. & Covers high-level concept but exhibits gaps in operational invariants. & Superficial or incorrect technical explanations. \\
+ \hline \textbf{Pedagogical Delivery / Clarity (Reel/Vlog/Case Study)} & Exceptional visual clarity, concise narrative pacing, professional audio/diagrams. & Clear explanation and structured logical flow. & Rushed pacing or overly verbose without clear visual anchors. & Disorganized, inaudible, or rambling presentation. \\
+ \hline \textbf{Real-World Contextualization} & Connects theory to modern production tools (e.g. Kafka, vLLM) with empirical insight. & Identifies relevant enterprise use cases. & Generic industry mention without architectural depth. & No real-world integration or relevance demonstrated. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+\vspace{4pt}
+{\normalsize\textbf{\color{nbaNavy}Rubric for MSE (Mid-Semester Examination (Theory))}}
+\begin{table}[h!]
+\centering
+\footnotesize
+\begin{tabularx}{\textwidth}{L{2.8cm} Y Y Y Y}
+\toprule
+\rowcolor{tableHeaderBg}
+\textbf{Evaluation Criterion} & \textbf{Exemplary (Level 4)} & \textbf{Proficient (Level 3)} & \textbf{Developing (Level 2)} & \textbf{Novice (Level 1)} \\
+\midrule
+\textbf{Problem Solving \& Analysis} & Formulates optimal architectural solution with justified complexity trade-offs. & Correct methodology with minor calculation or optimization oversights. & Applies standard approach but struggles with non-trivial constraints. & Unable to formulate a workable engineering solution. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+\vspace{4pt}
+{\normalsize\textbf{\color{nbaNavy}Rubric for CIAP (Continuous Internal Assessment for Practical / Lab)}}
+\begin{table}[h!]
+\centering
+\footnotesize
+\begin{tabularx}{\textwidth}{L{2.8cm} Y Y Y Y}
+\toprule
+\rowcolor{tableHeaderBg}
+\textbf{Evaluation Criterion} & \textbf{Exemplary (Level 4)} & \textbf{Proficient (Level 3)} & \textbf{Developing (Level 2)} & \textbf{Novice (Level 1)} \\
+\midrule
+\textbf{Code Implementation \& Correctness} & Code passes all test cases, follows clean architecture, properly handles exceptions. & Code functions correctly; minor non-critical styling or edge case issues. & Partial functionality; runtime errors under stress conditions. & Code fails to compile or execute. \\
+ \hline \textbf{Git Hygiene \& Documentation} & Meaningful commit messages, clean branches, comprehensive README and Dockerfile. & Adequate commit history and operational instructions. & Infrequent commits (e.g., single monolithic commit at end). & No version control or documentation provided. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+\vspace{4pt}
+{\normalsize\textbf{\color{nbaNavy}Rubric for ESE (End-Semester Examination (Theory))}}
+\begin{table}[h!]
+\centering
+\footnotesize
+\begin{tabularx}{\textwidth}{L{2.8cm} Y Y Y Y}
+\toprule
+\rowcolor{tableHeaderBg}
+\textbf{Evaluation Criterion} & \textbf{Exemplary (Level 4)} & \textbf{Proficient (Level 3)} & \textbf{Developing (Level 2)} & \textbf{Novice (Level 1)} \\
+\midrule
+\textbf{Problem Solving \& Analysis} & Formulates optimal architectural solution with justified complexity trade-offs. & Correct methodology with minor calculation or optimization oversights. & Applies standard approach but struggles with non-trivial constraints. & Unable to formulate a workable engineering solution. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+\vspace{4pt}
+{\normalsize\textbf{\color{nbaNavy}Rubric for ESEP (End-Semester Practical \& Oral Examination)}}
+\begin{table}[h!]
+\centering
+\footnotesize
+\begin{tabularx}{\textwidth}{L{2.8cm} Y Y Y Y}
+\toprule
+\rowcolor{tableHeaderBg}
+\textbf{Evaluation Criterion} & \textbf{Exemplary (Level 4)} & \textbf{Proficient (Level 3)} & \textbf{Developing (Level 2)} & \textbf{Novice (Level 1)} \\
+\midrule
+\textbf{Problem Solving \& Analysis} & Formulates optimal architectural solution with justified complexity trade-offs. & Correct methodology with minor calculation or optimization oversights. & Applies standard approach but struggles with non-trivial constraints. & Unable to formulate a workable engineering solution. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+\vspace{4pt}
+{\normalsize\textbf{\color{nbaNavy}Rubric for SLA (Self-Learning Assessment (SLA))}}
+\begin{table}[h!]
+\centering
+\footnotesize
+\begin{tabularx}{\textwidth}{L{2.8cm} Y Y Y Y}
+\toprule
+\rowcolor{tableHeaderBg}
+\textbf{Evaluation Criterion} & \textbf{Exemplary (Level 4)} & \textbf{Proficient (Level 3)} & \textbf{Developing (Level 2)} & \textbf{Novice (Level 1)} \\
+\midrule
+\textbf{Problem Solving \& Analysis} & Formulates optimal architectural solution with justified complexity trade-offs. & Correct methodology with minor calculation or optimization oversights. & Applies standard approach but struggles with non-trivial constraints. & Unable to formulate a workable engineering solution. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+% -----------------------------------------------------------------------------
+% 4. ATTAINMENT CALCULATION FORMULATION
+% -----------------------------------------------------------------------------
+\vspace{6pt}
+{\large\textbf{\color{nbaNavy}4. Course Outcome Attainment Calculation Formulation}}
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabularx}{\textwidth}{Y}
+\toprule
+\rowcolor{tableHeaderBg}
+\textbf{NBA Direct Attainment Formula} \\
+\midrule
+Course Outcome Direct Attainment = (80\% x CIE Attainment) + (20\% x SEE Attainment).
+CIE Attainment incorporates weighted contributions from CIA (Continuous Assessment), MSE (Mid-Semester Exam), CIAP (Practical Continuous Assessment), and SLA (Self-Learning Assessment). Target attainment threshold is set at 40\% aggregate marks, with Level 3 attainment achieved if >=70\% students score above threshold. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\vspace{16pt}
+\begin{table}[h!]
+\centering
+\begin{tabularx}{\textwidth}{Z Z Z}
+\toprule
+\vspace{20pt} & \vspace{20pt} & \vspace{20pt} \\
+\textbf{Course Coordinator} & \textbf{Program Coordinator / HOD} & \textbf{Dean (Academic Affairs)} \\
+\textit{Prepared for Course File} & \textit{Department Academic Committee} & \textit{Institutional Approval} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\end{document}

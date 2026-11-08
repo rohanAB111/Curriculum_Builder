@@ -14,14 +14,20 @@ except ImportError:
         return default
 
 
+class ProgramSpecificOutcome(BaseModel):
+    pso_id: str = Field(default="PSO1", example="PSO1")
+    statement: str = Field(default="", example="Professional Skills: Design and develop enterprise cloud and edge systems.")
+
+
 class CourseMeta(BaseModel):
-    course_name: str = Field(default="Advanced Distributed Systems & Cloud Architecture")
+    course_name: str = Field(default="Cloud-Native Distributed Systems & Microservices")
     course_code: str = Field(default="22CS501")
     academic_year: str = Field(default="2025-26")
     semester: str = Field(default="V")
     department: str = Field(default="Computer Science & Engineering")
     department_code: str = Field(default="CSE")
     scheme: str = Field(default="NEP 2020 / AICTE Model Curriculum")
+    course_type: str = Field(default="Integrated (Theory + Practical)", description="Theory, Practical, Integrated, Project")
     credits_l: int = Field(default=3)
     credits_t: int = Field(default=0)
     credits_p: int = Field(default=2)
@@ -30,12 +36,14 @@ class CourseMeta(BaseModel):
     theory_hours: int = Field(default=45)
     lab_hours: int = Field(default=30)
     self_study_hours: int = Field(default=15)
+    psos: List[ProgramSpecificOutcome] = Field(default_factory=list)
 
 
 class CourseOutcome(BaseModel):
     co_id: str = Field(default="CO1")
-    description: str = Field(default="Understand core engineering principles.")
-    bloom_level: str = Field(default="L2: Understand")
+    description: str = Field(default="Understand core principles.")
+    domain: str = Field(default="Cognitive", description="Cognitive, Psychomotor, Affective")
+    bloom_level: str = Field(default="L2: Understand", description="Specific cognitive, psychomotor or affective level")
     target_attainment_pct: Optional[float] = 70.0
 
 
@@ -67,14 +75,17 @@ class BookCitation(BaseModel):
 
 
 class AssessmentScheme(BaseModel):
-    cie_marks: int = Field(default=50)
-    see_marks: int = Field(default=50)
-    total_marks: int = Field(default=100)
-    continuous_tests_marks: int = Field(default=30)
-    quizzes_assignments_marks: int = Field(default=20)
-    see_duration_hours: int = Field(default=3)
+    # Comprehensive Institutional Assessment Scheme Breakdown
+    cia_marks: int = Field(default=20, description="Continuous Internal Assessment (Theory)")
+    mse_marks: int = Field(default=30, description="Mid Semester Examination (Theory)")
+    ciap_marks: int = Field(default=25, description="Continuous Internal Assessment for Practical / Lab")
+    ese_marks: int = Field(default=50, description="End Semester Examination (Theory)")
+    esep_marks: int = Field(default=25, description="End Semester Examination for Practical / Oral")
+    sla_marks: int = Field(default=20, description="Self Learning Assessment / Mini-Project")
+    total_marks: int = Field(default=150, description="Total aggregated course marks")
+    passing_threshold_pct: float = Field(default=40.0)
     rubrics_summary: str = Field(
-        default="Continuous assessment comprises 2 internal tests (30 marks) and active problem-solving/quizzes (20 marks). SEE evaluates comprehensive analytical and design mastery across all modules."
+        default="Comprehensive assessment comprises Continuous Internal Assessment (CIA & MSE), Practical Lab Performance (CIAP & ESEP), and Self-Learning Assessment (SLA)."
     )
 
 
@@ -149,6 +160,7 @@ class GenerationRequest(BaseModel):
         default="Edge AI, vLLM, TensorRT-LLM, Kafka Streams, TinyML, LangGraph"
     )
     num_modules: int = Field(default=5)
+    num_cos: int = Field(default=6)
     model_provider: str = Field(default="ollama")
     model_name: Optional[str] = None
     api_key: Optional[str] = None

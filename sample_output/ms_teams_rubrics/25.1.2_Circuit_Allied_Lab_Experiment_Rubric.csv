@@ -1,0 +1,19 @@
+"For the best editing experience, upload this .csv as a rubric in Microsoft Teams."
+
+"22CS501 - 25.1.2 Circuit-Allied Lab Experiment Rubric","100"
+""
+""
+,"","4","","3","","2","","1"
+"Conceptual Understanding & Circuit Planning (Cognitive)","Clearly explains circuit theory, working principle, equations and expected output.",,"Explains basic working and theory with minor gaps.",,"Partial understanding; depends on manual.",,"Unable to explain circuit or objective.",
+"20"
+"Component Identification & Handling (Psychomotor)","Correctly identifies components, ratings, polarity and handles them safely.",,"Minor identification or orientation errors corrected quickly.",,"Frequent component or connection mistakes.",,"Unable to identify or handle components properly.",
+"15"
+"Circuit Assembly & Troubleshooting (Cognitive + Psychomotor)","Neat wiring; systematic fault-finding using instruments; resolves issues independently.",,"Correct assembly; troubleshooting with guidance.",,"Disorganized wiring; struggles to locate faults.",,"Incorrect assembly; unable to troubleshoot.",
+"20"
+"Safety, Discipline & Lab Conduct (Affective)","Strictly follows safety procedures, power-up rules, grounding and discipline.",,"Generally safe with minor lapses.",,"Inconsistent safety practices.",,"Unsafe handling; violates lab safety norms.",
+"20"
+"Output Observation & Measurement Accuracy (Product)","Observed output matches theory; accurate measurements using CRO/DSO/multimeter.",,"Output mostly correct within acceptable error.",,"Partially correct or unstable output.",,"No meaningful output observed.",
+"15"
+"Observation Table, Calculations & Conclusion (Cognitive)","Complete observations, correct calculations, graphs and clear conclusion.",,"Minor errors in calculations or presentation.",,"Incomplete observations or weak analysis.",,"Poor or missing documentation.",
+"10"
+v.11p

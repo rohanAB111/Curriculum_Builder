@@ -9,7 +9,7 @@ try:
     from sqlalchemy import create_engine
     from sqlalchemy.ext.declarative import declarative_base
     from sqlalchemy.orm import sessionmaker
-    
+
     engine = create_engine(
         settings.DATABASE_URL,
         connect_args={"check_same_thread": False} if "sqlite" in settings.DATABASE_URL else {}
@@ -22,6 +22,18 @@ except ImportError:
     Base = object  # type: ignore
     engine = None
     SessionLocal = None
+
+
+SAKEC_DEFAULT_DEPARTMENTS = [
+    ("314824510", "Computer Engineering", "To become a globally recognized institution in Computer Engineering.", "Impart quality technical education and industry-aligned innovation."),
+    ("314824610", "Information Technology", "Excellence in Information Technology education and research.", "Prepare students to design, develop, and manage IT solutions ethically."),
+    ("314890010", "Electronics & Computer Science", "Bridge Electronics Engineering with modern Computer Science.", "Develop technically sound, economically viable solutions."),
+    ("314837210", "Electronics & Telecommunication Engineering", "Leadership in Electronics, Telecommunication, and Embedded Systems.", "Foster modern modeling, simulation, and interdisciplinary applications."),
+    ("314899510", "Artificial Intelligence and Data Science", "Pioneer AI, Machine Learning, and Data Science breakthroughs.", "Engineer robust and scalable AI/Data Science pipelines responsibly."),
+    ("314825210", "Cyber Security", "Safeguard digital infrastructure against evolving cyber threats.", "Apply ethical hacking and modern security tools with legal compliance."),
+    ("314837810", "VLSI Design & Technology", "Advance semiconductor and VLSI design innovation.", "Build technical competence using modern EDA and VLSI design tools."),
+    ("314892810", "Advanced Communication Technology", "Excel in next-generation telecommunication and satellite networks.", "Develop scalable hardware, communication, and embedded systems."),
+]
 
 
 class StandaloneDB:
@@ -37,7 +49,7 @@ class StandaloneDB:
     def _init_schema(self):
         conn = self.get_conn()
         cur = conn.cursor()
-        
+
         cur.execute("""
             CREATE TABLE IF NOT EXISTS departments (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -115,29 +127,25 @@ class StandaloneDB:
                 FOREIGN KEY (created_by) REFERENCES users(id)
             )
         """)
-        
-        # Seed default department and admin if empty
+
         cur.execute("SELECT COUNT(*) as count FROM departments")
         if cur.fetchone()["count"] == 0:
-            cur.execute("""
-                INSERT INTO departments (code, name, vision, mission)
-                VALUES ('CSE', 'Computer Science and Engineering', 
-                        'To excel in computer engineering education and industry innovation.',
-                        'Provide quality education, foster applied research, and instill ethical values.')
-            """)
-        
+            cur.executemany(
+                "INSERT INTO departments (code, name, vision, mission) VALUES (?, ?, ?, ?)",
+                SAKEC_DEFAULT_DEPARTMENTS,
+            )
+
         cur.execute("SELECT COUNT(*) as count FROM users")
         if cur.fetchone()["count"] == 0:
             from backend.app.core.security import hash_password
-            admin_pwd = hash_password("Admin@123")
-            faculty_pwd = hash_password("Faculty@123")
-            hod_pwd = hash_password("Hod@123")
+            default_pwd = hash_password("sakec@123")
             cur.execute("""
                 INSERT INTO users (email, full_name, hashed_password, role, department_id)
-                VALUES ('admin@curriculumai.edu', 'System Administrator', ?, 'Admin', 1),
-                       ('hod.cse@curriculumai.edu', 'Dr. Rajesh Sharma (HOD)', ?, 'HOD', 1),
-                       ('faculty@curriculumai.edu', 'Prof. Ananya Iyer', ?, 'Faculty', 1)
-            """, (admin_pwd, hod_pwd, faculty_pwd))
+                VALUES ('principal@sakec.ac.in', 'Dr. Bhavesh Patel (Principal, SAKEC)', ?, 'Principal', 1),
+                       ('hod@sakec.ac.in', 'Head of Department (HOD, SAKEC)', ?, 'HOD', 1),
+                       ('faculty@sakec.ac.in', 'Dr. Rohan Borgalli (Faculty & Developer, SAKEC)', ?, 'Faculty', 4),
+                       ('admin@sakec.ac.in', 'SAKEC ERP & System Administrator', ?, 'Admin', 1)
+            """, (default_pwd, default_pwd, default_pwd, default_pwd))
 
         conn.commit()
         conn.close()

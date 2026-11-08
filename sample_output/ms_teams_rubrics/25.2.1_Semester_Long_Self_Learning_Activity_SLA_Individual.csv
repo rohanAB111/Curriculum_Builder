@@ -1,0 +1,19 @@
+"For the best editing experience, upload this .csv as a rubric in Microsoft Teams."
+
+"22CS501 - 25.2.1 Semester Long Self-Learning Activity (SLA) - Individual","100"
+""
+""
+,"","4","","3","","2","","1"
+"Problem Understanding & Design Methodology Formulation (Phase 1)","Clear problem framing; well-structured, justified methodology.",,"Correct understanding with minor gaps.",,"Partial understanding; generic methodology.",,"Weak or incorrect methodology.",
+"25"
+"Methodology Validation - Implementation / Analytical Evidence (Phase 2)","Strong validation using implementation or analytical evidence.",,"Adequate validation with minor issues.",,"Limited or superficial validation.",,"Validation missing or incorrect.",
+"25"
+"Methodology Evaluation, Trade-offs & Decision Rationale (Phase 3)","Rigorous evaluation; justified decisions across scenarios and constraints.",,"Reasonable evaluation with limited scenarios.",,"Narrow or weak evaluation.",,"Arbitrary or unsupported decisions.",
+"20"
+"Final Comprehensive Report Quality","Well-organized, coherent, technically sound report.",,"Minor clarity or structure issues.",,"Basic but acceptable report.",,"Incomplete or poorly structured.",
+"15"
+"Plagiarism & AI Usage Compliance","Low similarity; transparent and ethical AI declaration.",,"Acceptable similarity; partial AI disclosure.",,"High similarity or unclear disclosure.",,"Plagiarism or unethical AI use.",
+"10"
+"Review Interaction & Defense","Confident, evidence-based justification.",,"Minor gaps in defense.",,"Limited clarity.",,"Unable to justify.",
+"5"
+v.11p

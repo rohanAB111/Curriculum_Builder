@@ -1,0 +1,19 @@
+"For the best editing experience, upload this .csv as a rubric in Microsoft Teams."
+
+"22CS501 - 25.1.1 Computer-Allied Lab Experiment Rubric","100"
+""
+""
+,"","4","","3","","2","","1"
+"Conceptual Understanding (Cognitive)","Clearly explains objectives, theory, algorithms, tools and expected outcomes with strong clarity.",,"Explains objectives and concepts correctly with minor gaps.",,"Partial understanding; relies on lab manual or instructions.",,"Unable to explain purpose or underlying concept.",
+"20"
+"Execution (Psychomotor)","Independently uses IDE, libraries and tools; code is correct, efficient and well-structured.",,"Executes code correctly with minor errors; minimal guidance required.",,"Frequent syntax/logical errors; needs repeated assistance.",,"Unable to execute experiment even with help.",
+"15"
+"Problem-Solving & Debugging (Cognitive + Psychomotor)","Systematically identifies errors, debugs efficiently and optimizes solution.",,"Identifies errors and fixes them with guidance.",,"Struggles to locate or resolve errors.",,"No meaningful attempt to debug.",
+"20"
+"Professional Conduct & Lab Ethics (Affective)","Highly disciplined, punctual, ethical; follows academic integrity and lab rules.",,"Generally disciplined with minor lapses.",,"Inconsistent discipline or over-dependence on peers.",,"Unprofessional behaviour; violates lab norms.",
+"20"
+"Output / Result Accuracy (Product)","Output fully correct, validated and meets experiment objectives.",,"Output mostly correct with minor deviations.",,"Partially correct output.",,"Incorrect or no output.",
+"15"
+"Documentation & Result Analysis (Cognitive)","Well-structured report with algorithm, code, screenshots, results and insightful analysis.",,"Complete documentation with basic analysis.",,"Incomplete or poorly explained report.",,"Very weak or missing documentation.",
+"10"
+v.11p

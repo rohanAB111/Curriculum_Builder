@@ -1,0 +1,19 @@
+"For the best editing experience, upload this .csv as a rubric in Microsoft Teams."
+
+"22CS501 - 25.2.2 Semester Long Self-Learning Activity (SLA) - Group","100"
+""
+""
+,"","4","","3","","2","","1"
+"Problem Understanding & Design Methodology (Phase 1)","Demonstrates deep, accurate understanding; methodology is coherent, justified, and integrates team insights.",,"Correct understanding with minor gaps; methodology mostly coherent.",,"Basic understanding; methodology basic with weak justification.",,"Misinterprets the problem; poorly defined methodology.",
+"25"
+"Contribution to Validation & Outcome Implementation (Phase 2)","Strong, well-documented contribution; outcomes strongly validate methodology using implementation or analytical evidence.",,"Adequate contribution with minor gaps; outcomes mostly validate methodology.",,"Minimal contribution; partial or weak validation.",,"Negligible contribution; incorrect or missing validation.",
+"25"
+"Evaluation, Trade-offs & Decision Justification (Phase 3)","Insightful evaluation; trade-offs clearly justified using evidence.",,"Reasonable evaluation across main scenarios.",,"Superficial evaluation.",,"Unsupported decisions.",
+"20"
+"Contribution to Final Report & Report Quality","Clear, substantial contribution; well-structured, coherent, technically sound report.",,"Adequate contribution; minor gaps in structure.",,"Limited contribution; basic report.",,"Minimal contribution; poorly structured report.",
+"15"
+"Review Interaction, Defense & Learning Reflection","Confident defense; clearly explains contribution and decisions with deep learning insights.",,"Clear reflection and explanation with minor gaps.",,"Limited clarity and generic reflection.",,"Unable to defend; minimal or irrelevant reflection.",
+"10"
+"Plagiarism & AI Compliance","Acceptable similarity and ethical compliance.",,"Minor similarity issues.",,"Moderate similarity issues.",,"Plagiarism detected.",
+"5"
+v.11p

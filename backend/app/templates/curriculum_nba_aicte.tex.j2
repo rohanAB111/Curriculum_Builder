@@ -1,6 +1,6 @@
 \documentclass[10pt,a4paper]{article}
 
-\usepackage[top=0.8in, bottom=0.8in, left=0.75in, right=0.75in]{geometry}
+\usepackage[top=0.75in, bottom=0.75in, left=0.75in, right=0.75in]{geometry}
 \usepackage{booktabs}
 \usepackage{tabularx}
 \usepackage{xcolor}
@@ -25,21 +25,29 @@
 \fancyhf{}
 \renewcommand{\headrulewidth}{0.6pt}
 \renewcommand{\footrulewidth}{0.4pt}
-\fancyhead[L]{\small\textbf{\color{nbaNavy}\VAR{ meta.department | default("Department of Engineering") }}}
-\fancyhead[R]{\small\color{nbaSlate}\VAR{ meta.course_code } - \VAR{ meta.scheme | default("NEP 2020 / AICTE") }}
-\fancyfoot[L]{\footnotesize\color{nbaSlate}CurriculumAI Studio \textbullet\ NBA Accreditation Document}
-\fancyfoot[R]{\footnotesize\textbf{\thepage}}
+\fancyhead[L]{\footnotesize\textbf{\color{nbaNavy}SHAH \& ANCHOR KUTCHHI ENGINEERING COLLEGE (AUTONOMOUS)}}
+\fancyhead[R]{\footnotesize\color{nbaSlate}\VAR{ meta.course_code } \textbullet\ DTE Code: 3148}
+\fancyfoot[L]{\footnotesize\color{nbaSlate}Developed by Dr. Rohan Borgalli \textbullet\ CurriculumAI Studio -- SAKEC OBE Portal (\url{https://www.sakec.ac.in/})}
+\fancyfoot[R]{\footnotesize\textbf{Page \thepage}}
 
 \setlength{\parindent}{0pt}
-\setlength{\parskip}{5pt}
+\setlength{\parskip}{4pt}
 
 \begin{document}
 
+% -----------------------------------------------------------------------------
+% OFFICIAL SAKEC INSTITUTIONAL HEADER & COURSE METADATA
+% -----------------------------------------------------------------------------
 \begin{center}
-    {\large\textbf{\color{nbaNavy}DEPARTMENT OF \VAR{ meta.department | upper }}}\\[3pt]
-    {\normalsize\textbf{\color{nbaSlate}ACADEMIC YEAR: \VAR{ meta.academic_year } \textbullet\ SEMESTER: \VAR{ meta.semester }}}\\[2pt]
-    {\footnotesize\textbf{Curriculum Scheme: \VAR{ meta.scheme } \textbullet\ Outcome-Based Education (OBE) Format}}\\[6pt]
-    \rule{\linewidth}{1.2pt}
+    {\footnotesize\textbf{\color{nbaSlate}Mahavir Education Trust's}}\\[1pt]
+    {\Large\textbf{\color{nbaNavy}SHAH \& ANCHOR KUTCHHI ENGINEERING COLLEGE}}\\[2pt]
+    {\footnotesize\textbf{An Autonomous Institute Affiliated to University of Mumbai \textbullet\ Approved by AICTE, New Delhi \& Govt. of Maharashtra}}\\[1pt]
+    {\scriptsize\color{nbaSlate}NAAC Accredited `A' Grade (3.16 CGPA) \textbullet\ NBA Accredited UG Programs (Comp. Engg., IT, EXTC) \textbullet\ ISO 9001:2015 \textbullet\ DTE Institute Code: 3148}\\[1pt]
+    {\scriptsize\color{nbaSlate}Mahavir Education Trust's Chowk, W. T. Patil Marg, Next to Duke's Co., Chembur, Mumbai -- 400 088 \textbullet\ Tel: 022-25580854 \textbullet\ \url{https://www.sakec.ac.in/}}\\[4pt]
+    \rule{\linewidth}{1.2pt}\\[3pt]
+    {\normalsize\textbf{\color{nbaNavy}DEPARTMENT OF \VAR{ meta.department | upper }}}\\[2pt]
+    {\footnotesize\textbf{\color{nbaSlate}ACADEMIC YEAR: \VAR{ meta.academic_year } \textbullet\ SEMESTER: \VAR{ meta.semester } \textbullet\ SCHEME: \VAR{ meta.scheme } \textbullet\ TYPE: \VAR{ meta.course_type | default("Integrated") }}}\\[2pt]
+    \rule{\linewidth}{0.6pt}
 \end{center}
 
 \vspace{-4pt}
@@ -50,57 +58,84 @@
 \begin{tabularx}{\textwidth}{L{3.0cm} Y L{3.0cm} Y}
 \toprule
 \textbf{Course Name:} & \multicolumn{3}{l}{\textbf{\color{nbaNavy}\VAR{ meta.course_name }}} \\
-\textbf{Course Code:} & \textbf{\VAR{ meta.course_code }} & \textbf{Regulation / Scheme:} & \VAR{ meta.scheme } \\
+\textbf{Course Code:} & \textbf{\VAR{ meta.course_code }} & \textbf{Course Type:} & \VAR{ meta.course_type | default("Theory + Lab") } \\
 \textbf{Credits (L-T-P-C):} & \VAR{ meta.credits_l } - \VAR{ meta.credits_t } - \VAR{ meta.credits_p } - \textbf{\VAR{ meta.credits_c }} & \textbf{Total Contact Hours:} & \textbf{\VAR{ meta.total_contact_hours } Hours} \\
 \textbf{Theory Hours:} & \VAR{ meta.theory_hours } Hours & \textbf{Practical/Lab Hours:} & \VAR{ meta.lab_hours } Hours \\
-\textbf{Self-Study / Project:} & \VAR{ meta.self_study_hours } Hours & \textbf{CIE / SEE Marks:} & \VAR{ assessment.cie_marks } / \VAR{ assessment.see_marks } (Total: \VAR{ assessment.total_marks }) \\
+\textbf{Self-Study / Project:} & \VAR{ meta.self_study_hours } Hours & \textbf{Total Marks:} & \textbf{\VAR{ assessment.total_marks } Marks} \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
+% -----------------------------------------------------------------------------
+% 1. COURSE OUTCOMES (COs) - MULTI-DOMAIN (COGNITIVE, PSYCHOMOTOR, AFFECTIVE)
+% -----------------------------------------------------------------------------
 \vspace{2pt}
-{\large\textbf{\color{nbaNavy}1. Course Outcomes (COs) \& Bloom's Cognitive Mapping}}
+{\large\textbf{\color{nbaNavy}1. Course Outcomes (COs) \& Multi-Domain Bloom's Taxonomy}}
 
 \begin{table}[h!]
 \centering
-\begin{tabularx}{\textwidth}{C{1.5cm} Y C{3.8cm} C{2.2cm}}
+\small
+\begin{tabularx}{\textwidth}{C{1.3cm} Y C{2.2cm} C{3.0cm} C{1.6cm}}
 \toprule
 \rowcolor{tableHeaderBg}
-\textbf{CO ID} & \textbf{Course Outcome Statement} & \textbf{Revised Bloom's Level} & \textbf{Target Attainment} \\
+\textbf{CO ID} & \textbf{Course Outcome Statement} & \textbf{Domain} & \textbf{Taxonomy Level} & \textbf{Target \%} \\
 \midrule
 \BLOCK{ for co in course_outcomes }
-\textbf{\color{nbaNavy}\VAR{ co.co_id }} & \VAR{ co.description } & \textbf{\VAR{ co.bloom_level }} & \VAR{ co.target_attainment_pct }\% \\
+\textbf{\color{nbaNavy}\VAR{ co.co_id }} & \VAR{ co.description } & \textbf{\VAR{ co.domain | default("Cognitive") }} & \VAR{ co.bloom_level } & \VAR{ co.target_attainment_pct }\% \\
 \BLOCK{ if not loop.last } \hline \BLOCK{ endif }
 \BLOCK{ endfor }
 \bottomrule
 \end{tabularx}
 \end{table}
 
-\footnotesize\textit{Bloom's Taxonomy Levels: L1: Remember, L2: Understand, L3: Apply, L4: Analyze, L5: Evaluate, L6: Create.}
+\footnotesize\textit{Domain Standards: Cognitive (L1: Remember to L6: Create), Psychomotor (P1: Imitation to P5: Naturalization for Lab/Hands-on), Affective (A1: Receiving to A5: Characterization for Team/Ethics).}
 \normalsize
 
-\vspace{8pt}
-{\large\textbf{\color{nbaNavy}2. CO-PO and CO-PSO Articulation Matrix (Course Articulation)}}
+% -----------------------------------------------------------------------------
+% 2. PROGRAM SPECIFIC OUTCOMES (PSOs)
+% -----------------------------------------------------------------------------
+\BLOCK{ if pso_list }
+\vspace{4pt}
+{\large\textbf{\color{nbaNavy}2. Program Specific Outcomes (PSOs)}}
+\begin{itemize}
+\BLOCK{ for pso in pso_list }
+    \item \textbf{\VAR{ pso.pso_id }}: \VAR{ pso.statement }
+\BLOCK{ endfor }
+\end{itemize}
+\BLOCK{ endif }
+
+% -----------------------------------------------------------------------------
+% 3. CO-PO & CO-PSO ARTICULATION MATRIX
+% -----------------------------------------------------------------------------
+\vspace{4pt}
+{\large\textbf{\color{nbaNavy}3. CO-PO and CO-PSO Articulation Matrix (Course Articulation)}}
 
 \begin{table}[h!]
 \centering
-\small
-\begin{tabularx}{\textwidth}{C{1.4cm} *{12}{Z} | *{3}{Z}}
+\footnotesize
+\begin{tabularx}{\textwidth}{C{1.2cm} *{12}{Z} \BLOCK{ if pso_list } | *{\VAR{ pso_list | length }}{Z} \BLOCK{ endif }}
 \toprule
 \rowcolor{tableHeaderBg}
-\textbf{CO ID} & \textbf{PO1} & \textbf{PO2} & \textbf{PO3} & \textbf{PO4} & \textbf{PO5} & \textbf{PO6} & \textbf{PO7} & \textbf{PO8} & \textbf{PO9} & \textbf{PO10} & \textbf{PO11} & \textbf{PO12} & \textbf{PSO1} & \textbf{PSO2} & \textbf{PSO3} \\
+\textbf{CO ID} & \textbf{PO1} & \textbf{PO2} & \textbf{PO3} & \textbf{PO4} & \textbf{PO5} & \textbf{PO6} & \textbf{PO7} & \textbf{PO8} & \textbf{PO9} & \textbf{PO10} & \textbf{PO11} & \textbf{PO12} 
+\BLOCK{ for pso in pso_list } & \textbf{\VAR{ pso.pso_id }} \BLOCK{ endfor } \\
 \midrule
 \BLOCK{ for co in course_outcomes }
 \textbf{\VAR{ co.co_id }} & 
-\BLOCK{ for target in ["PO1","PO2","PO3","PO4","PO5","PO6","PO7","PO8","PO9","PO10","PO11","PO12","PSO1","PSO2","PSO3"] }
-\VAR{ matrix_lookup.get(co.co_id ~ '_' ~ target, '-') }\BLOCK{ if not loop.last } & \BLOCK{ endif }
+\BLOCK{ for target in po_list }
+\VAR{ matrix_lookup.get(co.co_id ~ '_' ~ target, '-') } & 
+\BLOCK{ endfor }
+\BLOCK{ for pso in pso_list }
+\VAR{ matrix_lookup.get(co.co_id ~ '_' ~ pso.pso_id, '-') }\BLOCK{ if not loop.last } & \BLOCK{ endif }
 \BLOCK{ endfor } \\
 \BLOCK{ endfor }
 \midrule
 \rowcolor{tableHeaderBg}
 \textbf{Average} & 
-\BLOCK{ for target in ["PO1","PO2","PO3","PO4","PO5","PO6","PO7","PO8","PO9","PO10","PO11","PO12","PSO1","PSO2","PSO3"] }
-\textbf{\VAR{ averages.get(target, '-') }}\BLOCK{ if not loop.last } & \BLOCK{ endif }
+\BLOCK{ for target in po_list }
+\textbf{\VAR{ averages.get(target, '-') }} & 
+\BLOCK{ endfor }
+\BLOCK{ for pso in pso_list }
+\textbf{\VAR{ averages.get(pso.pso_id, '-') }}\BLOCK{ if not loop.last } & \BLOCK{ endif }
 \BLOCK{ endfor } \\
 \bottomrule
 \end{tabularx}
@@ -109,11 +144,14 @@
 \footnotesize\textit{Correlation Levels: 3: Substantial (High), 2: Moderate (Medium), 1: Slight (Low), -: No Correlation.}
 \normalsize
 
-\vspace{8pt}
-{\large\textbf{\color{nbaNavy}3. Detailed Unit / Module-Wise Syllabus}}
+% -----------------------------------------------------------------------------
+% 4. DETAILED MODULE-WISE SYLLABUS
+% -----------------------------------------------------------------------------
+\vspace{4pt}
+{\large\textbf{\color{nbaNavy}4. Detailed Unit / Module-Wise Syllabus}}
 
 \BLOCK{ for mod in modules }
-\vspace{4pt}
+\vspace{2pt}
 \begin{table}[h!]
 \centering
 \begin{tabularx}{\textwidth}{Y C{3.0cm} C{3.0cm}}
@@ -126,7 +164,7 @@
 \BLOCK{ if mod.industry_integration_tags }
 \textbf{\color{nbaHighlight}Industry Integration:} \VAR{ mod.industry_integration_tags | join(', ') }
 \BLOCK{ endif }
-\vspace{4pt}
+\vspace{3pt}
 \begin{itemize}
 \BLOCK{ for topic in mod.topics }
     \item \VAR{ topic }
@@ -138,27 +176,38 @@
 \end{table}
 \BLOCK{ endfor }
 
-\vspace{6pt}
-{\large\textbf{\color{nbaNavy}4. Assessment Scheme and Examination Pattern}}
+% -----------------------------------------------------------------------------
+% 5. COMPREHENSIVE ASSESSMENT SCHEME (CIA, MSE, CIAP, ESE, ESEP, SLA)
+% -----------------------------------------------------------------------------
+\vspace{4pt}
+{\large\textbf{\color{nbaNavy}5. Assessment Scheme and Examination Pattern}}
 
 \begin{table}[h!]
 \centering
-\begin{tabularx}{\textwidth}{L{4.2cm} C{2.5cm} Y}
+\small
+\begin{tabularx}{\textwidth}{L{5.0cm} C{2.2cm} Y}
 \toprule
 \rowcolor{tableHeaderBg}
-\textbf{Component} & \textbf{Max Marks} & \textbf{Assessment Mechanism \& Rubrics} \\
+\textbf{Evaluation Component} & \textbf{Max Marks} & \textbf{Assessment Mechanism \& Rubrics} \\
 \midrule
-\textbf{Continuous Internal Evaluation (CIE)} & \textbf{\VAR{ assessment.cie_marks } Marks} & 2 Mid-Term Tests (\VAR{ assessment.continuous_tests_marks } Marks) + Quizzes, Problem Sets, and Real-Time Lab Audits (\VAR{ assessment.quizzes_assignments_marks } Marks). \\
-\textbf{Semester End Examination (SEE)} & \textbf{\VAR{ assessment.see_marks } Marks} & Comprehensive \VAR{ assessment.see_duration_hours }-hour theory examination covering all \VAR{ modules | length } modules with balanced Bloom's level distribution. \\
+\textbf{Continuous Internal Assessment (CIA)} & \textbf{\VAR{ assessment.cia_marks } Marks} & Quizzes, Surprise Tests, Open-book Case Analysis \& Active Learning. \\
+\textbf{Mid-Semester Examination (MSE)} & \textbf{\VAR{ assessment.mse_marks } Marks} & 1.5-hour centralized written test covering foundational Modules 1 to 3. \\
+\textbf{Practical Internal Assessment (CIAP)} & \textbf{\VAR{ assessment.ciap_marks } Marks} & Continuous evaluation of lab experiments, code reviews, and logbooks. \\
+\textbf{End-Semester Examination (ESE - Theory)} & \textbf{\VAR{ assessment.ese_marks } Marks} & 3-hour comprehensive written evaluation across all modules. \\
+\textbf{End-Semester Practical Exam (ESEP)} & \textbf{\VAR{ assessment.esep_marks } Marks} & Hands-on lab implementation, viva-voce, and runtime verification. \\
+\textbf{Self-Learning Assessment (SLA)} & \textbf{\VAR{ assessment.sla_marks } Marks} & NPTEL/MOOC certification, capstone mini-project, or industrial seminar. \\
 \midrule
 \rowcolor{tableHeaderBg}
-\textbf{Total Course Marks} & \textbf{\VAR{ assessment.total_marks } Marks} & \textit{\VAR{ assessment.rubrics_summary }} \\
+\textbf{Total Aggregated Course Marks} & \textbf{\VAR{ assessment.total_marks } Marks} & \textbf{Passing Threshold: \VAR{ assessment.passing_threshold_pct }\% Aggregated} \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-\vspace{6pt}
-{\large\textbf{\color{nbaNavy}5. Textbooks and Reference Books (IEEE Academic Format)}}
+% -----------------------------------------------------------------------------
+% 6. TEXTBOOKS & REFERENCE BOOKS (IEEE Citation Format)
+% -----------------------------------------------------------------------------
+\vspace{4pt}
+{\large\textbf{\color{nbaNavy}6. Textbooks and Reference Books (IEEE Academic Format)}}
 
 \textbf{Textbooks:}
 \begin{enumerate}
@@ -174,16 +223,19 @@
 \BLOCK{ endfor }
 \end{enumerate}
 
-\vspace{18pt}
+\vspace{12pt}
 \begin{table}[h!]
 \centering
 \begin{tabularx}{\textwidth}{Z Z Z}
 \toprule
-\vspace{25pt} & \vspace{25pt} & \vspace{25pt} \\
-\textbf{Course Coordinator} & \textbf{Module Reviewer / HOD} & \textbf{Dean (Academics)} \\
-\textit{Faculty In-Charge} & \textit{Department of \VAR{ meta.department }} & \textit{Board of Studies Approval} \\
+\vspace{18pt} & \vspace{18pt} & \vspace{18pt} \\
+\textbf{Course Coordinator (Faculty)} & \textbf{Head of Department (HOD)} & \textbf{Dr. Bhavesh Patel (Principal)} \\
+\textit{Prepared by Faculty In-Charge} & \textit{Dept. of \VAR{ meta.department }, SAKEC} & \textit{Shah \& Anchor Kutchhi Engg. College} \\
 \bottomrule
 \end{tabularx}
 \end{table}
+\begin{center}
+{\scriptsize\color{nbaSlate}\textit{System Platform Engineered \& Developed by \textbf{Dr. Rohan Borgalli}, Shah \& Anchor Kutchhi Engineering College, Mumbai (\url{https://www.sakec.ac.in/}).}}
+\end{center}
 
 \end{document}

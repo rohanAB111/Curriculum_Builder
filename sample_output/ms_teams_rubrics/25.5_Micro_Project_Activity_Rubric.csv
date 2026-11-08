@@ -1,0 +1,17 @@
+"For the best editing experience, upload this .csv as a rubric in Microsoft Teams."
+
+"22CS501 - 25.5 Micro-Project Activity Rubric","100"
+""
+""
+,"","4","","3","","2","","1"
+"Problem Definition & Scope","Clearly defined problem with a focused and achievable scope.",,"Problem identified, but scope may be unclear or too broad/narrow.",,"Problem vaguely defined, or scope is missing.",,"Problem not clearly identified or missing.",
+"20"
+"Design & Methodology","Innovative and well-structured approach with justification for chosen methods.",,"Appropriate design and methodology, but limited justification.",,"Basic design and methodology, with some justification.",,"Weak or missing design and methodology.",
+"20"
+"Implementation & Results","Project completed effectively with clear and well-presented results.",,"Project completed but results are unclear or poorly presented.",,"Project partially completed with limited or unclear results.",,"Project not completed or results are missing.",
+"20"
+"Analysis & Interpretation","Thorough analysis with insightful interpretation of results.",,"Analysis attempted, but interpretation could be improved.",,"Basic analysis with limited interpretation.",,"Weak or missing analysis and interpretation.",
+"20"
+"Report & Presentation","Clear, concise, and well-organized report with effective presentation.",,"Report is generally well-written but may lack clarity or organization. Presentation could be improved.",,"Report lacks clarity or organization. Presentation needs significant improvement.",,"Poorly written report with ineffective or missing presentation.",
+"20"
+v.11p
