@@ -1,0 +1,1 @@
+"""CurriculumAI Studio App Package"""

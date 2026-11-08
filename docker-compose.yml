@@ -1,0 +1,99 @@
+version: '3.8'
+
+services:
+  # ---------------------------------------------------------------------------
+  # 1. PostgreSQL Database with pgvector Extension
+  # ---------------------------------------------------------------------------
+  db:
+    image: pgvector/pgvector:pg16
+    container_name: curriculumai_db
+    restart: always
+    environment:
+      POSTGRES_USER: curriculum_admin
+      POSTGRES_PASSWORD: curriculum_secure_password_2026
+      POSTGRES_DB: curriculumai_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U curriculum_admin -d curriculumai_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - curriculumai_net
+
+  # ---------------------------------------------------------------------------
+  # 2. FastAPI Backend & RAG Inference Service
+  # ---------------------------------------------------------------------------
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: curriculumai_backend
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://curriculum_admin:curriculum_secure_password_2026@db:5432/curriculumai_db
+      SECRET_KEY: ${SECRET_KEY:-curriculumai_super_secret_jwt_key_2026_change_in_production}
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-qwen2.5:32b}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
+      LATEX_COMPILER_BIN: pdflatex
+      UPLOAD_DIR: /app/storage/uploads
+      EXPORT_DIR: /app/storage/exports
+    ports:
+      - "8000:8000"
+    volumes:
+      - shared_storage:/app/storage
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - curriculumai_net
+
+  # ---------------------------------------------------------------------------
+  # 3. Next.js 14 Production Frontend
+  # ---------------------------------------------------------------------------
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    container_name: curriculumai_frontend
+    restart: always
+    depends_on:
+      - backend
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_API_URL: http://localhost:8000/api/v1
+    ports:
+      - "3000:3000"
+    networks:
+      - curriculumai_net
+
+  # ---------------------------------------------------------------------------
+  # 4. TeXLive-Full Dedicated Compilation Worker (Batch & Long Documents)
+  # ---------------------------------------------------------------------------
+  texlive-worker:
+    image: ghcr.io/xu-cheng/texlive-full:latest
+    container_name: curriculumai_texlive_worker
+    restart: always
+    volumes:
+      - shared_storage:/shared/storage
+    working_dir: /shared/storage
+    entrypoint: ["/bin/sh", "-c", "echo 'TeXLive-Full compilation daemon active' && tail -f /dev/null"]
+    networks:
+      - curriculumai_net
+
+volumes:
+  postgres_data:
+  shared_storage:
+
+networks:
+  curriculumai_net:
+    driver: bridge

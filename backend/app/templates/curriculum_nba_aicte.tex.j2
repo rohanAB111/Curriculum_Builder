@@ -1,0 +1,189 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[top=0.8in, bottom=0.8in, left=0.75in, right=0.75in]{geometry}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{fancyhdr}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage[hidelinks]{hyperref}
+
+\definecolor{nbaNavy}{RGB}{22, 54, 105}
+\definecolor{nbaSlate}{RGB}{70, 80, 95}
+\definecolor{nbaHighlight}{RGB}{220, 75, 45}
+\definecolor{tableHeaderBg}{RGB}{235, 242, 250}
+\definecolor{zebraLight}{RGB}{250, 252, 255}
+
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\newcolumntype{Z}{>{\centering\arraybackslash}X}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0.6pt}
+\renewcommand{\footrulewidth}{0.4pt}
+\fancyhead[L]{\small\textbf{\color{nbaNavy}\VAR{ meta.department | default("Department of Engineering") }}}
+\fancyhead[R]{\small\color{nbaSlate}\VAR{ meta.course_code } - \VAR{ meta.scheme | default("NEP 2020 / AICTE") }}
+\fancyfoot[L]{\footnotesize\color{nbaSlate}CurriculumAI Studio \textbullet\ NBA Accreditation Document}
+\fancyfoot[R]{\footnotesize\textbf{\thepage}}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+
+\begin{document}
+
+\begin{center}
+    {\large\textbf{\color{nbaNavy}DEPARTMENT OF \VAR{ meta.department | upper }}}\\[3pt]
+    {\normalsize\textbf{\color{nbaSlate}ACADEMIC YEAR: \VAR{ meta.academic_year } \textbullet\ SEMESTER: \VAR{ meta.semester }}}\\[2pt]
+    {\footnotesize\textbf{Curriculum Scheme: \VAR{ meta.scheme } \textbullet\ Outcome-Based Education (OBE) Format}}\\[6pt]
+    \rule{\linewidth}{1.2pt}
+\end{center}
+
+\vspace{-4pt}
+
+\begin{table}[h!]
+\centering
+\rowcolors{1}{white}{tableHeaderBg}
+\begin{tabularx}{\textwidth}{L{3.0cm} Y L{3.0cm} Y}
+\toprule
+\textbf{Course Name:} & \multicolumn{3}{l}{\textbf{\color{nbaNavy}\VAR{ meta.course_name }}} \\
+\textbf{Course Code:} & \textbf{\VAR{ meta.course_code }} & \textbf{Regulation / Scheme:} & \VAR{ meta.scheme } \\
+\textbf{Credits (L-T-P-C):} & \VAR{ meta.credits_l } - \VAR{ meta.credits_t } - \VAR{ meta.credits_p } - \textbf{\VAR{ meta.credits_c }} & \textbf{Total Contact Hours:} & \textbf{\VAR{ meta.total_contact_hours } Hours} \\
+\textbf{Theory Hours:} & \VAR{ meta.theory_hours } Hours & \textbf{Practical/Lab Hours:} & \VAR{ meta.lab_hours } Hours \\
+\textbf{Self-Study / Project:} & \VAR{ meta.self_study_hours } Hours & \textbf{CIE / SEE Marks:} & \VAR{ assessment.cie_marks } / \VAR{ assessment.see_marks } (Total: \VAR{ assessment.total_marks }) \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\vspace{2pt}
+{\large\textbf{\color{nbaNavy}1. Course Outcomes (COs) \& Bloom's Cognitive Mapping}}
+
+\begin{table}[h!]
+\centering
+\begin{tabularx}{\textwidth}{C{1.5cm} Y C{3.8cm} C{2.2cm}}
+\toprule
+\rowcolor{tableHeaderBg}
+\textbf{CO ID} & \textbf{Course Outcome Statement} & \textbf{Revised Bloom's Level} & \textbf{Target Attainment} \\
+\midrule
+\BLOCK{ for co in course_outcomes }
+\textbf{\color{nbaNavy}\VAR{ co.co_id }} & \VAR{ co.description } & \textbf{\VAR{ co.bloom_level }} & \VAR{ co.target_attainment_pct }\% \\
+\BLOCK{ if not loop.last } \hline \BLOCK{ endif }
+\BLOCK{ endfor }
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\footnotesize\textit{Bloom's Taxonomy Levels: L1: Remember, L2: Understand, L3: Apply, L4: Analyze, L5: Evaluate, L6: Create.}
+\normalsize
+
+\vspace{8pt}
+{\large\textbf{\color{nbaNavy}2. CO-PO and CO-PSO Articulation Matrix (Course Articulation)}}
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabularx}{\textwidth}{C{1.4cm} *{12}{Z} | *{3}{Z}}
+\toprule
+\rowcolor{tableHeaderBg}
+\textbf{CO ID} & \textbf{PO1} & \textbf{PO2} & \textbf{PO3} & \textbf{PO4} & \textbf{PO5} & \textbf{PO6} & \textbf{PO7} & \textbf{PO8} & \textbf{PO9} & \textbf{PO10} & \textbf{PO11} & \textbf{PO12} & \textbf{PSO1} & \textbf{PSO2} & \textbf{PSO3} \\
+\midrule
+\BLOCK{ for co in course_outcomes }
+\textbf{\VAR{ co.co_id }} & 
+\BLOCK{ for target in ["PO1","PO2","PO3","PO4","PO5","PO6","PO7","PO8","PO9","PO10","PO11","PO12","PSO1","PSO2","PSO3"] }
+\VAR{ matrix_lookup.get(co.co_id ~ '_' ~ target, '-') }\BLOCK{ if not loop.last } & \BLOCK{ endif }
+\BLOCK{ endfor } \\
+\BLOCK{ endfor }
+\midrule
+\rowcolor{tableHeaderBg}
+\textbf{Average} & 
+\BLOCK{ for target in ["PO1","PO2","PO3","PO4","PO5","PO6","PO7","PO8","PO9","PO10","PO11","PO12","PSO1","PSO2","PSO3"] }
+\textbf{\VAR{ averages.get(target, '-') }}\BLOCK{ if not loop.last } & \BLOCK{ endif }
+\BLOCK{ endfor } \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\footnotesize\textit{Correlation Levels: 3: Substantial (High), 2: Moderate (Medium), 1: Slight (Low), -: No Correlation.}
+\normalsize
+
+\vspace{8pt}
+{\large\textbf{\color{nbaNavy}3. Detailed Unit / Module-Wise Syllabus}}
+
+\BLOCK{ for mod in modules }
+\vspace{4pt}
+\begin{table}[h!]
+\centering
+\begin{tabularx}{\textwidth}{Y C{3.0cm} C{3.0cm}}
+\toprule
+\rowcolor{tableHeaderBg}
+\textbf{\color{nbaNavy}Module \VAR{ mod.module_number }: \VAR{ mod.title }} & \textbf{Contact: \VAR{ mod.contact_hours } Hours} & \textbf{Weightage: \VAR{ mod.weightage_pct }\%} \\
+\midrule
+\multicolumn{3}{p{0.97\textwidth}}{
+\textbf{Cognitive Focus:} \VAR{ mod.cognitive_level } \quad 
+\BLOCK{ if mod.industry_integration_tags }
+\textbf{\color{nbaHighlight}Industry Integration:} \VAR{ mod.industry_integration_tags | join(', ') }
+\BLOCK{ endif }
+\vspace{4pt}
+\begin{itemize}
+\BLOCK{ for topic in mod.topics }
+    \item \VAR{ topic }
+\BLOCK{ endfor }
+\end{itemize}
+} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+\BLOCK{ endfor }
+
+\vspace{6pt}
+{\large\textbf{\color{nbaNavy}4. Assessment Scheme and Examination Pattern}}
+
+\begin{table}[h!]
+\centering
+\begin{tabularx}{\textwidth}{L{4.2cm} C{2.5cm} Y}
+\toprule
+\rowcolor{tableHeaderBg}
+\textbf{Component} & \textbf{Max Marks} & \textbf{Assessment Mechanism \& Rubrics} \\
+\midrule
+\textbf{Continuous Internal Evaluation (CIE)} & \textbf{\VAR{ assessment.cie_marks } Marks} & 2 Mid-Term Tests (\VAR{ assessment.continuous_tests_marks } Marks) + Quizzes, Problem Sets, and Real-Time Lab Audits (\VAR{ assessment.quizzes_assignments_marks } Marks). \\
+\textbf{Semester End Examination (SEE)} & \textbf{\VAR{ assessment.see_marks } Marks} & Comprehensive \VAR{ assessment.see_duration_hours }-hour theory examination covering all \VAR{ modules | length } modules with balanced Bloom's level distribution. \\
+\midrule
+\rowcolor{tableHeaderBg}
+\textbf{Total Course Marks} & \textbf{\VAR{ assessment.total_marks } Marks} & \textit{\VAR{ assessment.rubrics_summary }} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\vspace{6pt}
+{\large\textbf{\color{nbaNavy}5. Textbooks and Reference Books (IEEE Academic Format)}}
+
+\textbf{Textbooks:}
+\begin{enumerate}
+\BLOCK{ for b in textbooks }
+    \item \VAR{ b.authors }, \textit{\VAR{ b.title }}, \VAR{ b.edition }, \VAR{ b.publisher }, \VAR{ b.year }.\BLOCK{ if b.isbn } [ISBN: \VAR{ b.isbn }]\BLOCK{ endif }
+\BLOCK{ endfor }
+\end{enumerate}
+
+\textbf{Reference Books \& Web Resources:}
+\begin{enumerate}
+\BLOCK{ for r in reference_books }
+    \item \VAR{ r.authors }, \textit{\VAR{ r.title }}, \VAR{ r.edition }, \VAR{ r.publisher }, \VAR{ r.year }.\BLOCK{ if r.isbn } [ISBN: \VAR{ r.isbn }]\BLOCK{ endif }
+\BLOCK{ endfor }
+\end{enumerate}
+
+\vspace{18pt}
+\begin{table}[h!]
+\centering
+\begin{tabularx}{\textwidth}{Z Z Z}
+\toprule
+\vspace{25pt} & \vspace{25pt} & \vspace{25pt} \\
+\textbf{Course Coordinator} & \textbf{Module Reviewer / HOD} & \textbf{Dean (Academics)} \\
+\textit{Faculty In-Charge} & \textit{Department of \VAR{ meta.department }} & \textit{Board of Studies Approval} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\end{document}

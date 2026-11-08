@@ -1,0 +1,271 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[top=0.8in, bottom=0.8in, left=0.75in, right=0.75in]{geometry}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{fancyhdr}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage[hidelinks]{hyperref}
+
+\definecolor{nbaNavy}{RGB}{22, 54, 105}
+\definecolor{nbaSlate}{RGB}{70, 80, 95}
+\definecolor{nbaHighlight}{RGB}{220, 75, 45}
+\definecolor{tableHeaderBg}{RGB}{235, 242, 250}
+\definecolor{zebraLight}{RGB}{250, 252, 255}
+
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\newcolumntype{Z}{>{\centering\arraybackslash}X}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0.6pt}
+\renewcommand{\footrulewidth}{0.4pt}
+\fancyhead[L]{\small\textbf{\color{nbaNavy}Computer Science \& Engineering}}
+\fancyhead[R]{\small\color{nbaSlate}22CS501 - NEP 2020 / AICTE Model Curriculum}
+\fancyfoot[L]{\footnotesize\color{nbaSlate}CurriculumAI Studio \textbullet\ NBA Accreditation Document}
+\fancyfoot[R]{\footnotesize\textbf{\thepage}}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+
+\begin{document}
+
+\begin{center}
+    {\large\textbf{\color{nbaNavy}DEPARTMENT OF COMPUTER SCIENCE \& ENGINEERING}}\\[3pt]
+    {\normalsize\textbf{\color{nbaSlate}ACADEMIC YEAR: 2025-26 \textbullet\ SEMESTER: V}}\\[2pt]
+    {\footnotesize\textbf{Curriculum Scheme: NEP 2020 / AICTE Model Curriculum \textbullet\ Outcome-Based Education (OBE) Format}}\\[6pt]
+    \rule{\linewidth}{1.2pt}
+\end{center}
+
+\vspace{-4pt}
+
+\begin{table}[h!]
+\centering
+\rowcolors{1}{white}{tableHeaderBg}
+\begin{tabularx}{\textwidth}{L{3.0cm} Y L{3.0cm} Y}
+\toprule
+\textbf{Course Name:} & \multicolumn{3}{l}{\textbf{\color{nbaNavy}Cloud-Native Distributed Systems and Microservices}} \\
+\textbf{Course Code:} & \textbf{22CS501} & \textbf{Regulation / Scheme:} & NEP 2020 / AICTE Model Curriculum \\
+\textbf{Credits (L-T-P-C):} & 3 - 0 - 2 - \textbf{4} & \textbf{Total Contact Hours:} & \textbf{45 Hours} \\
+\textbf{Theory Hours:} & 45 Hours & \textbf{Practical/Lab Hours:} & 30 Hours \\
+\textbf{Self-Study / Project:} & 15 Hours & \textbf{CIE / SEE Marks:} & 50 / 50 (Total: 100) \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\vspace{2pt}
+{\large\textbf{\color{nbaNavy}1. Course Outcomes (COs) \& Bloom's Cognitive Mapping}}
+
+\begin{table}[h!]
+\centering
+\begin{tabularx}{\textwidth}{C{1.5cm} Y C{3.8cm} C{2.2cm}}
+\toprule
+\rowcolor{tableHeaderBg}
+\textbf{CO ID} & \textbf{Course Outcome Statement} & \textbf{Revised Bloom's Level} & \textbf{Target Attainment} \\
+\midrule
+\textbf{\color{nbaNavy}CO1} & Understand and explain foundational concepts, formal representations, and system invariants. and formulate engineering solutions for Cloud-Native Distributed Systems and Microservices. & \textbf{L2: Understand} & 70.0\% \\
+ \hline \textbf{\color{nbaNavy}CO2} & Apply algorithmic techniques, mathematical models, and architectural patterns to solve domain problems. and formulate engineering solutions for Cloud-Native Distributed Systems and Microservices. & \textbf{L3: Apply} & 70.0\% \\
+ \hline \textbf{\color{nbaNavy}CO3} & Analyze system performance, bottlenecks, failure modes, and trade-offs under varying operational constraints. and formulate engineering solutions for Cloud-Native Distributed Systems and Microservices. & \textbf{L4: Analyze} & 70.0\% \\
+ \hline \textbf{\color{nbaNavy}CO4} & Formulate and analyze modern data workflows, streaming architectures, and distributed coordination. and formulate engineering solutions for Cloud-Native Distributed Systems and Microservices. & \textbf{L4: Analyze} & 70.0\% \\
+ \hline \textbf{\color{nbaNavy}CO5} & Evaluate enterprise integration strategies, security postures, and cost-performance trade-offs. and formulate engineering solutions for Cloud-Native Distributed Systems and Microservices. & \textbf{L5: Evaluate} & 70.0\% \\
+ \hline \textbf{\color{nbaNavy}CO6} & Design and synthesize an end-to-end, production-grade industry-aligned system integrating cutting-edge tooling. and formulate engineering solutions for Cloud-Native Distributed Systems and Microservices. & \textbf{L6: Create} & 70.0\% \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\footnotesize\textit{Bloom's Taxonomy Levels: L1: Remember, L2: Understand, L3: Apply, L4: Analyze, L5: Evaluate, L6: Create.}
+\normalsize
+
+\vspace{8pt}
+{\large\textbf{\color{nbaNavy}2. CO-PO and CO-PSO Articulation Matrix (Course Articulation)}}
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabularx}{\textwidth}{C{1.4cm} *{12}{Z} | *{3}{Z}}
+\toprule
+\rowcolor{tableHeaderBg}
+\textbf{CO ID} & \textbf{PO1} & \textbf{PO2} & \textbf{PO3} & \textbf{PO4} & \textbf{PO5} & \textbf{PO6} & \textbf{PO7} & \textbf{PO8} & \textbf{PO9} & \textbf{PO10} & \textbf{PO11} & \textbf{PO12} & \textbf{PSO1} & \textbf{PSO2} & \textbf{PSO3} \\
+\midrule
+\textbf{CO1} & 
+3 & - & - & - & - & - & - & - & - & - & - & 2 & 2 & 2 & 2 \\
+\textbf{CO2} & 
+3 & 2 & - & - & - & - & - & - & - & - & - & 2 & 2 & 2 & 2 \\
+\textbf{CO3} & 
+3 & 3 & - & 2 & 3 & - & - & - & - & - & - & 2 & 2 & 2 & 2 \\
+\textbf{CO4} & 
+3 & 3 & 2 & 2 & 3 & - & - & - & - & - & - & 2 & 3 & 3 & 3 \\
+\textbf{CO5} & 
+3 & 3 & 2 & 2 & 3 & - & - & - & - & - & - & 2 & 3 & 3 & 3 \\
+\textbf{CO6} & 
+3 & 3 & 3 & - & 3 & - & - & - & 2 & 2 & - & 2 & 3 & 3 & 3 \\
+\midrule
+\rowcolor{tableHeaderBg}
+\textbf{Average} & 
+\textbf{3.0} & \textbf{2.8} & \textbf{2.3} & \textbf{2.0} & \textbf{3.0} & \textbf{-} & \textbf{-} & \textbf{-} & \textbf{2.0} & \textbf{2.0} & \textbf{-} & \textbf{2.0} & \textbf{2.5} & \textbf{2.5} & \textbf{2.5} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\footnotesize\textit{Correlation Levels: 3: Substantial (High), 2: Moderate (Medium), 1: Slight (Low), -: No Correlation.}
+\normalsize
+
+\vspace{8pt}
+{\large\textbf{\color{nbaNavy}3. Detailed Unit / Module-Wise Syllabus}}
+
+\vspace{4pt}
+\begin{table}[h!]
+\centering
+\begin{tabularx}{\textwidth}{Y C{3.0cm} C{3.0cm}}
+\toprule
+\rowcolor{tableHeaderBg}
+\textbf{\color{nbaNavy}Module 1: Foundational Concepts and Theoretical Framework} & \textbf{Contact: 9 Hours} & \textbf{Weightage: 20.0\%} \\
+\midrule
+\multicolumn{3}{p{0.97\textwidth}}{
+\textbf{Cognitive Focus:} L1-L2 \quad 
+\vspace{4pt}
+\begin{itemize}
+    \item Introduction to Cloud-Native Distributed Systems and Microservices and core domain principles
+    \item Formal models, architectural taxonomies, and invariant properties
+    \item Mathematical foundations, complexity bounds, and state representation
+    \item Design space trade-offs, consistency criteria, and boundary conditions
+\end{itemize}
+} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+\vspace{4pt}
+\begin{table}[h!]
+\centering
+\begin{tabularx}{\textwidth}{Y C{3.0cm} C{3.0cm}}
+\toprule
+\rowcolor{tableHeaderBg}
+\textbf{\color{nbaNavy}Module 2: Core Algorithms and Design Patterns} & \textbf{Contact: 9 Hours} & \textbf{Weightage: 20.0\%} \\
+\midrule
+\multicolumn{3}{p{0.97\textwidth}}{
+\textbf{Cognitive Focus:} L2-L3 \quad 
+\vspace{4pt}
+\begin{itemize}
+    \item Fundamental algorithms, control flows, and scheduling mechanisms
+    \item Component interactions, interface contracts, and encapsulation
+    \item State synchronization, resource management, and partition recovery
+    \item Analytical verification and baseline validation benchmarks
+\end{itemize}
+} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+\vspace{4pt}
+\begin{table}[h!]
+\centering
+\begin{tabularx}{\textwidth}{Y C{3.0cm} C{3.0cm}}
+\toprule
+\rowcolor{tableHeaderBg}
+\textbf{\color{nbaNavy}Module 3: System Architecture and Optimization} & \textbf{Contact: 9 Hours} & \textbf{Weightage: 20.0\%} \\
+\midrule
+\multicolumn{3}{p{0.97\textwidth}}{
+\textbf{Cognitive Focus:} L3-L4 \quad 
+\vspace{4pt}
+\begin{itemize}
+    \item Modular decomposition, layering, and concurrency abstractions
+    \item High-performance caching, replication, and data partitioning
+    \item Fault-tolerant consensus, failure detectors, and self-healing topologies
+    \item Empirical profiling, bottleneck detection, and latency mitigation
+\end{itemize}
+} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+\vspace{4pt}
+\begin{table}[h!]
+\centering
+\begin{tabularx}{\textwidth}{Y C{3.0cm} C{3.0cm}}
+\toprule
+\rowcolor{tableHeaderBg}
+\textbf{\color{nbaNavy}Module 4: Modern Engineering Workflows \& Edge AI} & \textbf{Contact: 9 Hours} & \textbf{Weightage: 20.0\%} \\
+\midrule
+\multicolumn{3}{p{0.97\textwidth}}{
+\textbf{Cognitive Focus:} L4-L5 \quad 
+\textbf{\color{nbaHighlight}Industry Integration:} Edge AI, vLLM
+\vspace{4pt}
+\begin{itemize}
+    \item Integration of Edge AI into modern operational pipelines
+    \item Asynchronous event processing using vLLM and message brokers
+    \item Distributed telemetry, observability, and structured logging
+    \item Zero-trust security, containerized deployment, and CI/CD pipelines
+\end{itemize}
+} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+\vspace{4pt}
+\begin{table}[h!]
+\centering
+\begin{tabularx}{\textwidth}{Y C{3.0cm} C{3.0cm}}
+\toprule
+\rowcolor{tableHeaderBg}
+\textbf{\color{nbaNavy}Module 5: Advanced Industry Applications \& TensorRT-LLM} & \textbf{Contact: 9 Hours} & \textbf{Weightage: 20.0\%} \\
+\midrule
+\multicolumn{3}{p{0.97\textwidth}}{
+\textbf{Cognitive Focus:} L5-L6 \quad 
+\textbf{\color{nbaHighlight}Industry Integration:} TensorRT-LLM, Kafka Streams
+\vspace{4pt}
+\begin{itemize}
+    \item Edge computing architectures, TinyML, and hardware acceleration with TensorRT-LLM
+    \item High-throughput LLM serving and model optimization utilizing Kafka Streams
+    \item Fault injection testing, chaos engineering, and resilience metrics
+    \item Scalability benchmarking and compliance with modern enterprise standards
+\end{itemize}
+} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\vspace{6pt}
+{\large\textbf{\color{nbaNavy}4. Assessment Scheme and Examination Pattern}}
+
+\begin{table}[h!]
+\centering
+\begin{tabularx}{\textwidth}{L{4.2cm} C{2.5cm} Y}
+\toprule
+\rowcolor{tableHeaderBg}
+\textbf{Component} & \textbf{Max Marks} & \textbf{Assessment Mechanism \& Rubrics} \\
+\midrule
+\textbf{Continuous Internal Evaluation (CIE)} & \textbf{50 Marks} & 2 Mid-Term Tests (30 Marks) + Quizzes, Problem Sets, and Real-Time Lab Audits (20 Marks). \\
+\textbf{Semester End Examination (SEE)} & \textbf{50 Marks} & Comprehensive 3-hour theory examination covering all 5 modules with balanced Bloom's level distribution. \\
+\midrule
+\rowcolor{tableHeaderBg}
+\textbf{Total Course Marks} & \textbf{100 Marks} & \textit{Continuous Internal Evaluation (CIE) consists of 2 written tests (30 Marks) and hands-on assignments/quizzes (20 Marks). Semester End Examination (SEE) is a 3-hour written comprehensive evaluation carrying 50 Marks with questions from all 5 modules.} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\vspace{6pt}
+{\large\textbf{\color{nbaNavy}5. Textbooks and Reference Books (IEEE Academic Format)}}
+
+\textbf{Textbooks:}
+\begin{enumerate}
+    \item Martin Kleppmann, \textit{Designing Data-Intensive Applications: The Big Ideas Behind Reliable, Scalable, and Maintainable Systems}, 1st Edition, O'Reilly Media, 2023. [ISBN: 978-1449373320]    \item Andrew S. Tanenbaum and Maarten van Steen, \textit{Distributed Systems: Principles and Paradigms}, 4th Edition, Pearson Education, 2024. [ISBN: 978-1543057386]\end{enumerate}
+
+\textbf{Reference Books \& Web Resources:}
+\begin{enumerate}
+    \item Brendan Burns, \textit{Designing Distributed Systems: Patterns and Paradigms for Scalable, Reliable Services}, 2nd Edition, O'Reilly Media, 2024. [ISBN: 978-1492031772]    \item IEEE / ACM Joint Curriculum Committee, \textit{Computer Science Curricula 2023: Guidelines for Associate and Baccalaureate Programs in Computing}, Final Edition, IEEE-CS \& ACM Press, 2024.\end{enumerate}
+
+\vspace{18pt}
+\begin{table}[h!]
+\centering
+\begin{tabularx}{\textwidth}{Z Z Z}
+\toprule
+\vspace{25pt} & \vspace{25pt} & \vspace{25pt} \\
+\textbf{Course Coordinator} & \textbf{Module Reviewer / HOD} & \textbf{Dean (Academics)} \\
+\textit{Faculty In-Charge} & \textit{Department of Computer Science \& Engineering} & \textit{Board of Studies Approval} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\end{document}

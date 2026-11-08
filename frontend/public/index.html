@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CurriculumAI Studio - NBA/AICTE Accreditation Platform</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            nba: {
+              navy: '#163669',
+              slate: '#46505f',
+              accent: '#dc4b2d',
+              light: '#ebf2fa',
+              dark: '#0b1d3a'
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-slate-50 text-slate-900 font-sans min-h-screen flex flex-col">
+
+  <!-- Header -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex justify-between items-center">
+      <div class="flex items-center space-x-3">
+        <div class="bg-nba-navy text-white p-2 rounded-lg shadow-sm">
+          <i class="fa-solid fa-graduation-cap text-lg"></i>
+        </div>
+        <div>
+          <h1 class="text-xl font-bold text-nba-navy tracking-tight flex items-center gap-2">
+            CurriculumAI Studio
+            <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">
+              NBA / AICTE Ready
+            </span>
+          </h1>
+          <p class="text-xs text-slate-500">Outcome-Based Syllabus Generation & LaTeX Compilation Studio</p>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="flex space-x-1 bg-slate-100 p-1 rounded-lg text-xs font-medium">
+        <button onclick="switchTab('wizard')" id="tab-btn-wizard" class="tab-btn active px-3 py-1.5 rounded-md bg-white text-nba-navy shadow-sm">
+          <i class="fa-solid fa-file-lines mr-1"></i> Curriculum Wizard
+        </button>
+        <button onclick="switchTab('rag')" id="tab-btn-rag" class="tab-btn px-3 py-1.5 rounded-md text-slate-600 hover:text-slate-900">
+          <i class="fa-solid fa-database mr-1"></i> RAG Context Store
+        </button>
+        <button onclick="switchTab('editor')" id="tab-btn-editor" class="tab-btn px-3 py-1.5 rounded-md text-slate-600 hover:text-slate-900">
+          <i class="fa-solid fa-code mr-1"></i> Live LaTeX Editor
+        </button>
+        <button onclick="switchTab('export')" id="tab-btn-export" class="tab-btn px-3 py-1.5 rounded-md text-slate-600 hover:text-slate-900">
+          <i class="fa-solid fa-file-pdf mr-1"></i> PDF Preview & Review
+        </button>
+      </nav>
+
+      <!-- Role Badge -->
+      <div class="flex items-center space-x-2 bg-slate-50 border border-slate-200 px-3 py-1 rounded-md text-xs">
+        <i class="fa-solid fa-user-tie text-slate-500"></i>
+        <span class="text-slate-500">Role:</span>
+        <select id="user-role" class="bg-transparent font-semibold text-nba-navy focus:outline-none">
+          <option value="Faculty">Faculty</option>
+          <option value="HOD">HOD / Reviewer</option>
+          <option value="Admin">Administrator</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <!-- TAB 1: CURRICULUM WIZARD -->
+    <div id="tab-wizard" class="tab-content space-y-6">
+      <div class="flex justify-between items-center bg-gradient-to-r from-nba-navy to-slate-800 text-white p-6 rounded-2xl shadow-md">
+        <div>
+          <h2 class="text-xl font-bold tracking-tight">Generate NBA/AICTE Compliant Curriculum</h2>
+          <p class="text-xs text-slate-300 mt-1 max-w-2xl">
+            Synthesizes theoretical modules (Units 1-3), injects cutting-edge industry platforms (Units 4-6), balances contact hours, and formulates Bloom's-aligned COs and PO articulation matrices.
+          </p>
+        </div>
+        <button onclick="generateCurriculum()" id="btn-generate" class="flex items-center space-x-2 bg-nba-accent hover:bg-orange-600 text-white text-xs font-bold px-5 py-3 rounded-xl transition-all shadow-lg">
+          <i class="fa-solid fa-wand-magic-sparkles"></i>
+          <span>Generate Curriculum</span>
+        </button>
+      </div>
+
+      <!-- Course Metadata -->
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-4">
+        <h3 class="text-sm font-bold text-nba-navy border-b pb-2">1. Course Metadata & Academic Scheme</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+          <div class="md:col-span-2">
+            <label class="block font-semibold text-slate-700 mb-1">Course / Subject Name</label>
+            <input id="input-course-name" type="text" value="Cloud-Native Distributed Systems & Microservices" class="w-full text-sm px-3 py-2 border rounded-lg focus:ring-1 focus:ring-nba-navy">
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Course Code</label>
+            <input id="input-course-code" type="text" value="22CS501" class="w-full text-sm font-mono px-3 py-2 border rounded-lg focus:ring-1 focus:ring-nba-navy">
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Department</label>
+            <input id="input-dept" type="text" value="Computer Science & Engineering" class="w-full px-3 py-2 border rounded-lg">
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Curriculum Scheme</label>
+            <select id="input-scheme" class="w-full px-3 py-2 border rounded-lg bg-white">
+              <option>NEP 2020 / AICTE Model Curriculum</option>
+              <option>Choice Based Credit System (CBCS)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Credits (L-T-P-C)</label>
+            <div class="grid grid-cols-4 gap-1 text-center">
+              <input id="input-credits-l" type="number" value="3" class="px-2 py-1 border rounded text-center" title="Lectures">
+              <input id="input-credits-t" type="number" value="0" class="px-2 py-1 border rounded text-center" title="Tutorials">
+              <input id="input-credits-p" type="number" value="2" class="px-2 py-1 border rounded text-center" title="Practicals">
+              <input id="input-credits-c" type="number" value="4" class="px-2 py-1 border rounded text-center font-bold text-nba-navy" title="Total Credits">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Industry Topics Input -->
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-3">
+        <h3 class="text-sm font-bold text-nba-navy border-b pb-2 flex items-center gap-2">
+          <i class="fa-solid fa-microchip text-nba-accent"></i>
+          2. Novel Industry Integration (AICTE / Industry 4.0 Mandate)
+        </h3>
+        <p class="text-xs text-slate-500">
+          Enter cutting-edge frameworks to inject into advanced modules (Modules 4-6) while preserving rigorous theory in Modules 1-3.
+        </p>
+        <input id="input-industry-topics" type="text" value="Edge AI, vLLM, TensorRT-LLM, Kafka Streams, TinyML, LangGraph" class="w-full text-xs px-3 py-2.5 border border-slate-300 rounded-lg focus:ring-1 focus:ring-nba-navy">
+      </div>
+
+      <!-- Articulation Matrix -->
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-3 overflow-x-auto">
+        <h3 class="text-sm font-bold text-nba-navy border-b pb-2">3. CO-PO & CO-PSO Articulation Matrix (NBA Criterion 3)</h3>
+        <p class="text-xs text-slate-500">Correlation levels: 3: Substantial (High), 2: Moderate, 1: Slight, -: No correlation.</p>
+        <table class="w-full text-xs border-collapse text-center">
+          <thead>
+            <tr class="bg-slate-100 font-bold text-slate-700">
+              <th class="border p-2 text-left">CO ID</th>
+              <th class="border p-1.5">PO1</th>
+              <th class="border p-1.5">PO2</th>
+              <th class="border p-1.5">PO3</th>
+              <th class="border p-1.5">PO4</th>
+              <th class="border p-1.5">PO5</th>
+              <th class="border p-1.5">PO6</th>
+              <th class="border p-1.5">PO7</th>
+              <th class="border p-1.5">PO8</th>
+              <th class="border p-1.5">PO9</th>
+              <th class="border p-1.5">PO10</th>
+              <th class="border p-1.5">PO11</th>
+              <th class="border p-1.5">PO12</th>
+              <th class="border p-1.5 bg-amber-50">PSO1</th>
+              <th class="border p-1.5 bg-amber-50">PSO2</th>
+              <th class="border p-1.5 bg-amber-50">PSO3</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="border p-2 font-bold text-nba-navy text-left">CO1 (L2)</td><td class="border p-1.5 font-bold text-blue-600">3</td><td class="border p-1.5">2</td><td class="border p-1.5">-</td><td class="border p-1.5">-</td><td class="border p-1.5">-</td><td class="border p-1.5">-</td><td class="border p-1.5">-</td><td class="border p-1.5">-</td><td class="border p-1.5">-</td><td class="border p-1.5">-</td><td class="border p-1.5">-</td><td class="border p-1.5">2</td><td class="border p-1.5">2</td><td class="border p-1.5">2</td><td class="border p-1.5">2</td></tr>
+            <tr><td class="border p-2 font-bold text-nba-navy text-left">CO2 (L3)</td><td class="border p-1.5 font-bold text-blue-600">3</td><td class="border p-1.5 font-bold text-blue-600">3</td><td class="border p-1.5">2</td><td class="border p-1.5">-</td><td class="border p-1.5 font-bold text-blue-600">3</td><td class="border p-1.5">-</td><td class="border p-1.5">-</td><td class="border p-1.5">-</td><td class="border p-1.5">-</td><td class="border p-1.5">-</td><td class="border p-1.5">-</td><td class="border p-1.5">2</td><td class="border p-1.5 font-bold text-blue-600">3</td><td class="border p-1.5 font-bold text-blue-600">3</td><td class="border p-1.5">2</td></tr>
+            <tr><td class="border p-2 font-bold text-nba-navy text-left">CO3 (L4)</td><td class="border p-1.5 font-bold text-blue-600">3</td><td class="border p-1.5 font-bold text-blue-600">3</td><td class="border p-1.5">2</td><td class="border p-1.5">2</td><td class="border p-1.5 font-bold text-blue-600">3</td><td class="border p-1.5">-</td><td class="border p-1.5">-</td><td class="border p-1.5">-</td><td class="border p-1.5">-</td><td class="border p-1.5">-</td><td class="border p-1.5">-</td><td class="border p-1.5">2</td><td class="border p-1.5 font-bold text-blue-600">3</td><td class="border p-1.5 font-bold text-blue-600">3</td><td class="border p-1.5">2</td></tr>
+            <tr><td class="border p-2 font-bold text-nba-navy text-left">CO4 (L4)</td><td class="border p-1.5 font-bold text-blue-600">3</td><td class="border p-1.5 font-bold text-blue-600">3</td><td class="border p-1.5">2</td><td class="border p-1.5">2</td><td class="border p-1.5 font-bold text-blue-600">3</td><td class="border p-1.5">-</td><td class="border p-1.5">-</td><td class="border p-1.5">-</td><td class="border p-1.5">-</td><td class="border p-1.5">-</td><td class="border p-1.5">-</td><td class="border p-1.5">2</td><td class="border p-1.5 font-bold text-blue-600">3</td><td class="border p-1.5 font-bold text-blue-600">3</td><td class="border p-1.5 font-bold text-blue-600">3</td></tr>
+            <tr><td class="border p-2 font-bold text-nba-navy text-left">CO5 (L5)</td><td class="border p-1.5 font-bold text-blue-600">3</td><td class="border p-1.5 font-bold text-blue-600">3</td><td class="border p-1.5 font-bold text-blue-600">3</td><td class="border p-1.5">2</td><td class="border p-1.5 font-bold text-blue-600">3</td><td class="border p-1.5">2</td><td class="border p-1.5">2</td><td class="border p-1.5">-</td><td class="border p-1.5">-</td><td class="border p-1.5">-</td><td class="border p-1.5">-</td><td class="border p-1.5">2</td><td class="border p-1.5 font-bold text-blue-600">3</td><td class="border p-1.5 font-bold text-blue-600">3</td><td class="border p-1.5 font-bold text-blue-600">3</td></tr>
+            <tr><td class="border p-2 font-bold text-nba-navy text-left">CO6 (L6)</td><td class="border p-1.5 font-bold text-blue-600">3</td><td class="border p-1.5 font-bold text-blue-600">3</td><td class="border p-1.5 font-bold text-blue-600">3</td><td class="border p-1.5">-</td><td class="border p-1.5 font-bold text-blue-600">3</td><td class="border p-1.5">2</td><td class="border p-1.5">2</td><td class="border p-1.5">2</td><td class="border p-1.5">2</td><td class="border p-1.5">2</td><td class="border p-1.5">2</td><td class="border p-1.5 font-bold text-blue-600">3</td><td class="border p-1.5 font-bold text-blue-600">3</td><td class="border p-1.5 font-bold text-blue-600">3</td><td class="border p-1.5 font-bold text-blue-600">3</td></tr>
+            <tr class="bg-slate-100 font-bold border-t-2"><td class="border p-2 text-left text-nba-navy">Average</td><td class="border p-1.5 text-nba-navy">3.0</td><td class="border p-1.5 text-nba-navy">2.8</td><td class="border p-1.5 text-nba-navy">2.5</td><td class="border p-1.5 text-nba-navy">2.0</td><td class="border p-1.5 text-nba-navy">3.0</td><td class="border p-1.5 text-nba-navy">2.0</td><td class="border p-1.5 text-nba-navy">2.0</td><td class="border p-1.5 text-nba-navy">2.0</td><td class="border p-1.5 text-nba-navy">2.0</td><td class="border p-1.5 text-nba-navy">2.0</td><td class="border p-1.5 text-nba-navy">2.0</td><td class="border p-1.5 text-nba-navy">2.2</td><td class="border p-1.5 text-nba-navy">2.8</td><td class="border p-1.5 text-nba-navy">2.8</td><td class="border p-1.5 text-nba-navy">2.5</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB 2: RAG CONTEXT STORE -->
+    <div id="tab-rag" class="tab-content hidden space-y-6">
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-4">
+        <h3 class="text-sm font-bold text-nba-navy border-b pb-2 flex items-center gap-2">
+          <i class="fa-solid fa-cloud-arrow-up"></i>
+          Ingest Reference Syllabi & Bloom's Taxonomy Matrix
+        </h3>
+        <p class="text-xs text-slate-500">
+          Upload syllabi documents to populate the parent-child hierarchical vector store.
+        </p>
+        <div class="border-2 border-dashed border-slate-300 rounded-xl p-8 text-center bg-slate-50">
+          <i class="fa-solid fa-file-pdf text-3xl text-slate-400 mb-2"></i>
+          <p class="text-xs font-semibold text-slate-700">Drag and drop course syllabi (PDF, DOCX, TXT)</p>
+          <p class="text-[11px] text-slate-400 mt-1">Hierarchical chunker automatically extracts Units and Lecture Outlines.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: LIVE LATEX EDITOR -->
+    <div id="tab-editor" class="tab-content hidden space-y-4">
+      <div class="flex justify-between items-center">
+        <div>
+          <h2 class="text-lg font-bold text-nba-navy">Live LaTeX Code & Compiler Console</h2>
+          <p class="text-xs text-slate-500">Jinja2 rendered source ready for two-pass compilation worker.</p>
+        </div>
+        <button onclick="compileLatex()" id="btn-compile" class="flex items-center space-x-1.5 text-xs bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-4 py-2 rounded-lg shadow-sm">
+          <i class="fa-solid fa-play"></i>
+          <span>Compile to PDF</span>
+        </button>
+      </div>
+
+      <div class="bg-slate-950 rounded-xl overflow-hidden border border-slate-800 flex h-[600px]">
+        <textarea id="latex-editor-text" class="w-2/3 p-4 bg-slate-950 text-emerald-300 font-mono text-xs focus:outline-none resize-none leading-relaxed" spellcheck="false">% NBA/AICTE LaTeX Source Code
+\documentclass[10pt,a4paper]{article}
+\usepackage[margin=0.75in]{geometry}
+\usepackage{booktabs,tabularx,xcolor,colortbl,fancyhdr}
+\begin{document}
+\title{NBA Curriculum Specification}
+\maketitle
+% Detailed rendered syllabus modules...
+\end{document}</textarea>
+        <div class="w-1/3 bg-slate-900 border-l border-slate-800 p-4 font-mono text-[11px] text-slate-300 overflow-y-auto">
+          <div class="font-bold text-white mb-2 pb-1 border-b border-slate-700">Compiler Log:</div>
+          <div id="compiler-log-text" class="text-slate-400 space-y-1">
+            Ready to compile. Click 'Compile to PDF' to trigger pdflatex worker.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: EXPORT & REVIEW -->
+    <div id="tab-export" class="tab-content hidden space-y-6">
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-4">
+        <div class="flex justify-between items-center border-b pb-4">
+          <div>
+            <h3 class="text-lg font-bold text-nba-navy">22CS501: Cloud-Native Distributed Systems</h3>
+            <span class="text-xs px-2.5 py-0.5 rounded-full font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
+              NBA APPROVED
+            </span>
+          </div>
+          <div class="flex space-x-2">
+            <a href="/api/v1/curriculum/1/export/pdf" download class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-3 py-2 rounded-lg flex items-center space-x-1.5 shadow-sm">
+              <i class="fa-solid fa-download"></i> <span>Download PDF</span>
+            </a>
+            <a href="/api/v1/curriculum/1/export/zip" download class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-3 py-2 rounded-lg flex items-center space-x-1.5 shadow-sm">
+              <i class="fa-solid fa-file-zipper"></i> <span>Download ZIP Bundle</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="w-full h-[600px] border border-slate-300 rounded-lg overflow-hidden bg-slate-100 flex items-center justify-center">
+          <iframe id="pdf-preview-frame" src="/api/v1/curriculum/1/export/pdf" class="w-full h-full"></iframe>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('bg-white', 'text-nba-navy', 'shadow-sm');
+        btn.classList.add('text-slate-600');
+      });
+      document.getElementById('tab-' + tabId).classList.remove('hidden');
+      const activeBtn = document.getElementById('tab-btn-' + tabId);
+      activeBtn.classList.add('bg-white', 'text-nba-navy', 'shadow-sm');
+      activeBtn.classList.remove('text-slate-600');
+    }
+
+    async function generateCurriculum() {
+      const btn = document.getElementById('btn-generate');
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Synthesizing...</span>';
+      setTimeout(() => {
+        btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> <span>Generate Curriculum</span>';
+        switchTab('editor');
+        document.getElementById('compiler-log-text').innerHTML = 'Generated curriculum successfully with balanced hours and Bloom levels. Ready for pdflatex.';
+      }, 1000);
+    }
+
+    async function compileLatex() {
+      const log = document.getElementById('compiler-log-text');
+      log.innerHTML = 'Executing pdflatex -interaction=nonstopmode (Pass 1 of 2)...<br>Resolving references and booktabs tables (Pass 2 of 2)...<br><span class="text-emerald-400 font-bold">✓ PDF compiled successfully (3 pages, 163 KB)</span>';
+      setTimeout(() => {
+        switchTab('export');
+      }, 1200);
+    }
+  </script>
+</body>
+</html>
