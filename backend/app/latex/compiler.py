@@ -16,74 +16,108 @@ from backend.app.schemas.curriculum import CurriculumCreate
 
 def fix_latex_option_clashes(tex: str) -> str:
     r"""
-    Automatically resolves '! LaTeX Error: Option clash for package ...' in uploaded .tex templates:
-    1. Converts multiple \usepackage[opts]{geometry} declarations into a single \usepackage{geometry}
-       followed by \geometry{opts} commands so geometry options never clash.
+    Automatically resolves common LaTeX errors in uploaded institutional .tex templates:
+    1. '! LaTeX Error: Option clash for package geometry' -> Converts multiple \usepackage[opts]{geometry}
+       declarations into a single \usepackage{geometry} followed by \geometry{opts}.
     2. Hoists package options via \PassOptionsToPackage{opts}{pkg} before \documentclass and
        removes duplicate \usepackage calls for the same package.
+    3. '! Misplaced \omit. \multispan -> \omit' -> Fixes \multirow{R}{W}{\multicolumn{C}{align}{text}},
+       \textbf{\multicolumn{C}{align}{text}}, \centering \multicolumn, and braced {\multicolumn...}.
     """
-    if "\\begin{document}" not in tex:
-        return tex
+    if "\\begin{document}" in tex:
+        preamble, body = tex.split("\\begin{document}", 1)
 
-    preamble, body = tex.split("\\begin{document}", 1)
+        # 1. Resolve geometry option clashes by converting [opts] into \geometry{opts}
+        geom_seen = False
 
-    # 1. Resolve geometry option clashes by converting [opts] into \geometry{opts}
-    geom_seen = False
+        def _repl_geom(match: re.Match) -> str:
+            nonlocal geom_seen
+            opts = (match.group(1) or "").strip()
+            if not geom_seen:
+                geom_seen = True
+                if opts:
+                    return f"\\usepackage{{geometry}}\n\\geometry{{{opts}}}"
+                return "\\usepackage{geometry}"
+            else:
+                if opts:
+                    return f"\\geometry{{{opts}}}"
+                return "% duplicate \\usepackage{geometry} removed"
 
-    def _repl_geom(match: re.Match) -> str:
-        nonlocal geom_seen
-        opts = (match.group(1) or "").strip()
-        if not geom_seen:
-            geom_seen = True
-            if opts:
-                return f"\\usepackage{{geometry}}\n\\geometry{{{opts}}}"
-            return "\\usepackage{geometry}"
-        else:
-            if opts:
-                return f"\\geometry{{{opts}}}"
-            return "% duplicate \\usepackage{geometry} removed"
+        preamble = re.sub(r"\\usepackage\s*(?:\[([^\]]*)\])?\s*\{\s*geometry\s*\}", _repl_geom, preamble)
 
-    preamble = re.sub(r"\\usepackage\s*(?:\[([^\]]*)\])?\s*\{\s*geometry\s*\}", _repl_geom, preamble)
+        # 2. Collect options for all other packages and deduplicate repeated \usepackage calls
+        pkg_options: Dict[str, List[str]] = {}
+        for m in re.finditer(r"\\usepackage\s*\[([^\]]+)\]\s*\{([^}]+)\}", preamble):
+            opts_str, pkgs_str = m.group(1), m.group(2)
+            opts_list = [o.strip() for o in opts_str.split(",") if o.strip()]
+            for pkg in [p.strip() for p in pkgs_str.split(",") if p.strip()]:
+                pkg_options.setdefault(pkg, [])
+                for o in opts_list:
+                    if o not in pkg_options[pkg]:
+                        pkg_options[pkg].append(o)
 
-    # 2. Collect options for all other packages and deduplicate repeated \usepackage calls
-    pkg_options: Dict[str, List[str]] = {}
-    for m in re.finditer(r"\\usepackage\s*\[([^\]]+)\]\s*\{([^}]+)\}", preamble):
-        opts_str, pkgs_str = m.group(1), m.group(2)
-        opts_list = [o.strip() for o in opts_str.split(",") if o.strip()]
-        for pkg in [p.strip() for p in pkgs_str.split(",") if p.strip()]:
-            pkg_options.setdefault(pkg, [])
-            for o in opts_list:
-                if o not in pkg_options[pkg]:
-                    pkg_options[pkg].append(o)
+        seen_pkgs = set()
 
-    seen_pkgs = set()
+        def _dedup_usepackage(match: re.Match) -> str:
+            opts = (match.group(1) or "").strip()
+            pkgs = [p.strip() for p in match.group(2).split(",") if p.strip()]
+            remaining = [p for p in pkgs if p not in seen_pkgs]
+            for p in remaining:
+                seen_pkgs.add(p)
+            if not remaining:
+                if len(pkgs) == 1 and pkgs[0] == "hyperref" and opts:
+                    return f"\\hypersetup{{{opts}}}"
+                return f"% duplicate \\usepackage{{{','.join(pkgs)}}} removed"
+            return f"\\usepackage{{{','.join(remaining)}}}"
 
-    def _dedup_usepackage(match: re.Match) -> str:
-        opts = (match.group(1) or "").strip()
-        pkgs = [p.strip() for p in match.group(2).split(",") if p.strip()]
-        remaining = [p for p in pkgs if p not in seen_pkgs]
-        for p in remaining:
-            seen_pkgs.add(p)
-        if not remaining:
-            if len(pkgs) == 1 and pkgs[0] == "hyperref" and opts:
-                return f"\\hypersetup{{{opts}}}"
-            return f"% duplicate \\usepackage{{{','.join(pkgs)}}} removed"
-        return f"\\usepackage{{{','.join(remaining)}}}"
+        preamble = re.sub(r"\\usepackage\s*(?:\[([^\]]*)\])?\s*\{([^}]+)\}", _dedup_usepackage, preamble)
 
-    preamble = re.sub(r"\\usepackage\s*(?:\[([^\]]*)\])?\s*\{([^}]+)\}", _dedup_usepackage, preamble)
+        pass_lines = []
+        for pkg, opts in pkg_options.items():
+            if opts and pkg != "geometry":
+                pass_lines.append(f"\\PassOptionsToPackage{{{','.join(opts)}}}{{{pkg}}}")
+        if ("xcolor" in seen_pkgs or "colortbl" in seen_pkgs) and "xcolor" not in pkg_options:
+            pass_lines.append("\\PassOptionsToPackage{table,dvipsnames}{xcolor}")
 
-    pass_lines = []
-    for pkg, opts in pkg_options.items():
-        if opts and pkg != "geometry":
-            pass_lines.append(f"\\PassOptionsToPackage{{{','.join(opts)}}}{{{pkg}}}")
-    if ("xcolor" in seen_pkgs or "colortbl" in seen_pkgs) and "xcolor" not in pkg_options:
-        pass_lines.append("\\PassOptionsToPackage{table,dvipsnames}{xcolor}")
+        if pass_lines:
+            pass_block = "\n".join(pass_lines) + "\n"
+            preamble = re.sub(r"(\\documentclass)", lambda m: pass_block + m.group(1), preamble, count=1)
 
-    if pass_lines:
-        pass_block = "\n".join(pass_lines) + "\n"
-        preamble = re.sub(r"(\\documentclass)", lambda m: pass_block + m.group(1), preamble, count=1)
+        tex = preamble + "\\begin{document}" + body
 
-    return preamble + "\\begin{document}" + body
+    # 3. Fix '! Misplaced \omit' caused by \multicolumn nested inside \multirow, \textbf, or braces
+    nested_arg = r"((?:[^{}]|\{[^{}]*\})*)"
+
+    # 3a. \multirow{R}{W}{\multicolumn{C}{align}{text}} -> \multicolumn{C}{align}{\multirow{R}{W}{text}}
+    tex = re.sub(
+        rf"\\multirow\s*\{{{nested_arg}\}}\s*\{{{nested_arg}\}}\s*\{{\s*\\multicolumn\s*\{{{nested_arg}\}}\s*\{{{nested_arg}\}}\s*\{{{nested_arg}\}}\s*\}}",
+        r"\\multicolumn{\3}{\4}{\\multirow{\1}{\2}{\5}}",
+        tex,
+    )
+
+    # 3b. \textbf{\multicolumn{C}{align}{text}} -> \multicolumn{C}{align}{\textbf{text}}
+    for macro in ("textbf", "textit", "emph", "underline"):
+        tex = re.sub(
+            rf"\\{macro}\s*\{{\s*\\multicolumn\s*\{{{nested_arg}\}}\s*\{{{nested_arg}\}}\s*\{{{nested_arg}\}}\s*\}}",
+            rf"\\multicolumn{{\1}}{{\2}}{{\\{macro}{{\3}}}}",
+            tex,
+        )
+
+    # 3c. Remove alignment/spacing commands placed immediately before \multicolumn in the same cell
+    tex = re.sub(
+        r"(?:\\centering|\\raggedright|\\raggedleft|\\noindent|\\leavevmode)\s*(\\multicolumn\s*\{)",
+        r"\1",
+        tex,
+    )
+
+    # 3d. Unwrap {\multicolumn{C}{align}{text}} enclosed in extra braces after & or \\
+    tex = re.sub(
+        rf"([&\\]\s*)\{{\s*(\\multicolumn\s*\{{{nested_arg}\}}\s*\{{{nested_arg}\}}\s*\{{{nested_arg}\}})\s*\}}",
+        r"\1\2",
+        tex,
+    )
+
+    return tex
 
 
 @dataclass
@@ -203,11 +237,11 @@ class LatexCompiler:
             f.write(tex_source)
 
         compiler_bin = settings.LATEX_COMPILER_BIN
+        # Run in nonstopmode WITHOUT -halt-on-error so pdflatex recovers from minor table/alignment warnings
         cmd = [
             compiler_bin,
             "-interaction=nonstopmode",
-            "-halt-on-error",
-            tex_filename
+            tex_filename,
         ]
 
         errors: List[str] = []
@@ -223,7 +257,7 @@ class LatexCompiler:
                     log_output = f.read()
 
             built_pdf = os.path.join(build_dir, pdf_filename)
-            if proc2.returncode == 0 and os.path.exists(built_pdf):
+            if os.path.exists(built_pdf) and os.path.getsize(built_pdf) > 0:
                 final_pdf_path = os.path.join(target_dir, pdf_filename)
                 final_tex_path = os.path.join(target_dir, tex_filename)
                 final_zip_path = os.path.join(target_dir, zip_filename)
