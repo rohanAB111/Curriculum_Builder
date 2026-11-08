@@ -55,8 +55,14 @@ from backend.app.schemas.curriculum import (
     AssessmentScheme,
     CurriculumCreate,
     GenerationRequest,
-    ProgramSpecificOutcome,
 )
+try:
+    from backend.app.schemas.curriculum import ProgramSpecificOutcome
+except ImportError:
+    from pydantic import BaseModel, Field
+    class ProgramSpecificOutcome(BaseModel):
+        pso_id: str = Field(default="PSO1")
+        statement: str = Field(default="")
 from backend.app.schemas.assessment import (
     AssessmentComponentDetail,
     AssessmentPlanRequest,
