@@ -18,7 +18,6 @@ class ProgramSpecificOutcome(BaseModel):
     pso_id: str = Field(default="PSO1", example="PSO1")
     statement: str = Field(default="", example="Professional Skills: Design and develop enterprise cloud and edge systems.")
 
-
 class CourseMeta(BaseModel):
     course_name: str = Field(default="Cloud-Native Distributed Systems & Microservices")
     course_code: str = Field(default="22CS501")
