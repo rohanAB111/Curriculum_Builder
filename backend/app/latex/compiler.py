@@ -68,7 +68,13 @@ def fix_latex_option_clashes(tex: str) -> str:
                 if len(pkgs) == 1 and pkgs[0] == "hyperref" and opts:
                     return f"\\hypersetup{{{opts}}}"
                 return f"% duplicate \\usepackage{{{','.join(pkgs)}}} removed"
-            return f"\\usepackage{{{','.join(remaining)}}}"
+            out_pkgs = []
+            for p in remaining:
+                if p in ("multirow", "afterpage", "subcaption", "float", "enumitem", "titlesec"):
+                    out_pkgs.append(f"\\IfFileExists{{{p}.sty}}{{\\usepackage{{{p}}}}}{{}}")
+                else:
+                    out_pkgs.append(f"\\usepackage{{{p}}}")
+            return "\n".join(out_pkgs)
 
         preamble = re.sub(r"\\usepackage\s*(?:\[([^\]]*)\])?\s*\{([^}]+)\}", _dedup_usepackage, preamble)
 
@@ -117,6 +123,14 @@ def fix_latex_option_clashes(tex: str) -> str:
         tex,
     )
 
+    # 3e. Guard \includegraphics[opts]{file} with \IfFileExists so missing local image files in uploaded .tex templates do not crash pdflatex
+    def _guard_includegraphics(m: re.Match) -> str:
+        full_cmd = m.group(0)
+        img_file = m.group(2).strip()
+        return f"\\IfFileExists{{{img_file}}}{{{full_cmd}}}{{}}"
+
+    tex = re.sub(r"\\includegraphics\s*(\[[^\]]*\])?\s*\{([^{}]+)\}", _guard_includegraphics, tex)
+
     return tex
 
 
@@ -164,9 +178,7 @@ class LatexCompiler:
             return [self._sanitize_data_recursively(i) for i in obj]
         return obj
 
-    def render_template(self, curriculum: CurriculumCreate) -> str:
-        template = self.env.get_template(self.template_name)
-
+    def _build_template_context(self, curriculum: CurriculumCreate) -> Dict[str, Any]:
         matrix_lookup: Dict[str, str] = {}
         target_totals: Dict[str, List[int]] = {}
 
@@ -211,10 +223,62 @@ class LatexCompiler:
             "reference_books": [r.dict() if hasattr(r, "dict") else r.__dict__ for r in curriculum.reference_books],
             "assessment": curriculum.assessment_scheme.dict() if hasattr(curriculum.assessment_scheme, "dict") else curriculum.assessment_scheme.__dict__,
         }
+        return self._sanitize_data_recursively(raw_context)
 
-        context = self._sanitize_data_recursively(raw_context)
+    def render_template(self, curriculum: CurriculumCreate) -> str:
+        template = self.env.get_template(self.template_name)
+        context = self._build_template_context(curriculum)
         rendered_tex = template.render(**context)
         return rendered_tex
+
+    def render_with_custom_template(self, curriculum: CurriculumCreate, custom_tex_str: str) -> str:
+        r"""
+        Populates a user-uploaded custom .tex template with the generated curriculum:
+        - If the uploaded .tex file contains Jinja2 placeholders (\VAR{...} or \BLOCK{...}), renders them directly.
+        - Otherwise, preserves the uploaded .tex template's documentclass, geometry, and packages,
+          and injects the complete generated course curriculum sections (Course Meta, Multi-Domain COs,
+          PSOs, CO-PO-PSO Matrix, Modules, 6-Component Assessment, and Books).
+        """
+        cleaned_custom = fix_latex_option_clashes(custom_tex_str)
+
+        if "\\VAR{" in cleaned_custom or "\\BLOCK{" in cleaned_custom:
+            try:
+                custom_tpl = self.env.from_string(cleaned_custom)
+                context = self._build_template_context(curriculum)
+                return fix_latex_option_clashes(custom_tpl.render(**context))
+            except Exception:
+                pass
+
+        generated_full_tex = self.render_template(curriculum)
+        if "\\begin{document}" not in cleaned_custom or "\\begin{document}" not in generated_full_tex:
+            return generated_full_tex
+
+        custom_preamble = cleaned_custom.split("\\begin{document}", 1)[0]
+        generated_body = generated_full_tex.split("\\begin{document}", 1)[1]
+
+        extra_defs = []
+        for req_pkg in ["booktabs", "tabularx", "xcolor", "colortbl", "fancyhdr", "array", "longtable", "hyperref"]:
+            if f"{{{req_pkg}}}" not in custom_preamble:
+                extra_defs.append(f"\\usepackage{{{req_pkg}}}")
+
+        color_and_col_defs = [
+            ("nbaNavy", "\\definecolor{nbaNavy}{RGB}{22, 54, 105}"),
+            ("nbaSlate", "\\definecolor{nbaSlate}{RGB}{70, 80, 95}"),
+            ("nbaHighlight", "\\definecolor{nbaHighlight}{RGB}{220, 75, 45}"),
+            ("tableHeaderBg", "\\definecolor{tableHeaderBg}{RGB}{235, 242, 250}"),
+            ("zebraLight", "\\definecolor{zebraLight}{RGB}{250, 252, 255}"),
+            ("\\newcolumntype{Y}", "\\newcolumntype{Y}{>{\\raggedright\\arraybackslash}X}"),
+            ("\\newcolumntype{Z}", "\\newcolumntype{Z}{>{\\centering\\arraybackslash}X}"),
+            ("\\newcolumntype{C}", "\\newcolumntype{C}[1]{>{\\centering\\arraybackslash}p{#1}}"),
+            ("\\newcolumntype{L}", "\\newcolumntype{L}[1]{>{\\raggedright\\arraybackslash}p{#1}}"),
+        ]
+        for marker, def_line in color_and_col_defs:
+            if marker not in custom_preamble:
+                extra_defs.append(def_line)
+
+        extra_str = ("\n" + "\n".join(extra_defs) + "\n") if extra_defs else "\n"
+        merged_tex = custom_preamble + extra_str + "\\begin{document}\n" + generated_body
+        return fix_latex_option_clashes(merged_tex)
 
     def compile(
         self,
@@ -237,7 +301,6 @@ class LatexCompiler:
             f.write(tex_source)
 
         compiler_bin = settings.LATEX_COMPILER_BIN
-        # Run in nonstopmode WITHOUT -halt-on-error so pdflatex recovers from minor table/alignment warnings
         cmd = [
             compiler_bin,
             "-interaction=nonstopmode",
