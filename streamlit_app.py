@@ -60,7 +60,7 @@ try:
     from backend.app.schemas.curriculum import ProgramSpecificOutcome
 except ImportError:
     from pydantic import BaseModel, Field
-    class ProgramSpecificOutcome(BaseModel):
+    class ProgramSpecificOutcome(BaseModel):  # type: ignore
         pso_id: str = Field(default="PSO1")
         statement: str = Field(default="")
 from backend.app.schemas.assessment import (
@@ -346,6 +346,12 @@ if "curriculum" not in st.session_state:
     st.session_state.curriculum = None
 if "tex_source" not in st.session_state:
     st.session_state.tex_source = ""
+if "tex_editor_version" not in st.session_state:
+    st.session_state.tex_editor_version = 0
+if "custom_uploaded_tex" not in st.session_state:
+    st.session_state.custom_uploaded_tex = ""
+if "last_uploaded_tex_hash" not in st.session_state:
+    st.session_state.last_uploaded_tex_hash = ""
 if "compilation_result" not in st.session_state:
     st.session_state.compilation_result = None
 if "curriculum_status" not in st.session_state:
@@ -922,6 +928,83 @@ with tabs[5]:
     st.dataframe(matrix_data, hide_index=True)
 
 
+# Helper to synthesize or sync current UI inputs (Tabs 1-6) into CurriculumCreate & LaTeX
+def _synthesize_and_render_latex(use_custom_template: bool = False):
+    psos_objects = [ProgramSpecificOutcome(pso_id=p["id"], statement=p["statement"]) for p in st.session_state.custom_psos]
+    meta_obj = CourseMeta(
+        course_name=course_name,
+        course_code=course_code,
+        academic_year=academic_year,
+        semester=semester,
+        department=dept,
+        scheme=scheme,
+        course_type=course_type,
+        credits_l=credits_l,
+        credits_t=credits_t,
+        credits_p=credits_p,
+        credits_c=credits_c,
+        total_contact_hours=total_hours,
+        theory_hours=theory_hours,
+        lab_hours=lab_hours,
+        self_study_hours=self_study,
+        psos=psos_objects,
+    )
+
+    gen_req = GenerationRequest(
+        course_meta=meta_obj,
+        industry_topics=industry_topics,
+        num_modules=num_modules_val,
+        num_cos=num_cos_val,
+        model_provider=provider_code,
+        model_name=model_name or None,
+        api_key=api_key or None,
+        ollama_url=ollama_url or None,
+        temperature=temperature,
+    )
+    generator = CurriculumGenerator(gen_req)
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    curr = loop.run_until_complete(generator.generate_curriculum())
+    loop.close()
+
+    # Always preserve the faculty's exact edited Multi-Domain COs from Tab 2
+    if co_inputs:
+        curr.course_outcomes = [
+            CourseOutcome(
+                co_id=c["id"],
+                domain=c["domain"],
+                bloom_level=c["bloom_level"],
+                description=c["desc"],
+                target_attainment_pct=c["target"],
+            )
+            for c in co_inputs
+        ]
+
+    # Always preserve the faculty's exact 6-component Assessment Scheme from Tab 4
+    curr.assessment_scheme = AssessmentScheme(
+        cia_marks=cia_val,
+        mse_marks=mse_val,
+        ciap_marks=ciap_val,
+        ese_marks=ese_val,
+        esep_marks=esep_val,
+        sla_marks=sla_val,
+        total_marks=calculated_total,
+        passing_threshold_pct=pass_thresh,
+    )
+
+    compiler = LatexCompiler()
+    if use_custom_template and st.session_state.get("custom_uploaded_tex"):
+        tex = compiler.render_with_custom_template(curr, st.session_state.custom_uploaded_tex)
+    else:
+        tex = compiler.render_template(curr)
+
+    st.session_state.curriculum = curr
+    st.session_state.tex_source = tex
+    st.session_state.tex_editor_version += 1
+    st.session_state.curriculum_status = "DRAFT"
+    return curr, tex
+
+
 # TAB 7: CURRICULUM GENERATION & MODULES
 with tabs[6]:
     st.markdown("### AI Generation & Mathematical Hour Balancing")
@@ -932,62 +1015,10 @@ with tabs[6]:
         generate_clicked = st.button("✨ Synthesize Curriculum", type="primary")
 
     if generate_clicked:
-        with st.spinner(f"Querying {model_name} on {server_mode}..."):
-            psos_objects = [ProgramSpecificOutcome(pso_id=p["id"], statement=p["statement"]) for p in st.session_state.custom_psos]
-            meta_obj = CourseMeta(
-                course_name=course_name,
-                course_code=course_code,
-                academic_year=academic_year,
-                semester=semester,
-                department=dept,
-                scheme=scheme,
-                course_type=course_type,
-                credits_l=credits_l,
-                credits_t=credits_t,
-                credits_p=credits_p,
-                credits_c=credits_c,
-                total_contact_hours=total_hours,
-                theory_hours=theory_hours,
-                lab_hours=lab_hours,
-                self_study_hours=self_study,
-                psos=psos_objects
-            )
-
-            gen_req = GenerationRequest(
-                course_meta=meta_obj,
-                industry_topics=industry_topics,
-                num_modules=num_modules_val,
-                num_cos=num_cos_val,
-                model_provider=provider_code,
-                model_name=model_name or None,
-                api_key=api_key or None,
-                ollama_url=ollama_url or None,
-                temperature=temperature
-            )
-            generator = CurriculumGenerator(gen_req)
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-            curr = loop.run_until_complete(generator.generate_curriculum())
-            loop.close()
-
-            curr.assessment_scheme = AssessmentScheme(
-                cia_marks=cia_val,
-                mse_marks=mse_val,
-                ciap_marks=ciap_val,
-                ese_marks=ese_val,
-                esep_marks=esep_val,
-                sla_marks=sla_val,
-                total_marks=calculated_total,
-                passing_threshold_pct=pass_thresh
-            )
-
-            compiler = LatexCompiler()
-            tex = compiler.render_template(curr)
-
-            st.session_state.curriculum = curr
-            st.session_state.tex_source = tex
-            st.session_state.curriculum_status = "DRAFT"
-            st.success(f"Generated {num_modules_val} modules and {num_cos_val} multi-domain outcomes!")
+        with st.spinner(f"Querying {model_name} on {server_mode} and updating LaTeX template..."):
+            use_custom = bool(st.session_state.get("custom_uploaded_tex"))
+            curr, tex = _synthesize_and_render_latex(use_custom_template=use_custom)
+            st.success(f"Generated {num_modules_val} modules and {num_cos_val} multi-domain outcomes, and updated the LaTeX template in Tab 8!")
 
     if st.session_state.curriculum:
         st.markdown("---")
@@ -1005,22 +1036,65 @@ with tabs[6]:
 
 # TAB 8: CUSTOM LATEX TEMPLATE UPLOAD & COMPILER
 with tabs[7]:
-    st.markdown("### Reference LaTeX Template Upload & pdflatex Compiler")
-    st.caption("Upload your own institutional `.tex` reference template or use the standard NBA/AICTE template.")
+    from backend.app.latex.compiler import fix_latex_option_clashes
+    import hashlib
 
-    template_mode = st.radio("Template Choice:", ["Standard Publication-Grade NBA/AICTE Template", "Upload Custom Institutional .tex Template"], index=0)
+    st.markdown("### Reference LaTeX Template Upload & pdflatex Compiler")
+    st.caption("Upload your institutional `.tex` reference template or use the standard SAKEC NBA/AICTE template. Your created curriculum is automatically injected into the LaTeX source below.")
+
+    template_mode = st.radio(
+        "Template Choice:",
+        ["Standard Publication-Grade NBA/AICTE Template", "Upload Custom Institutional .tex Template"],
+        index=0,
+    )
 
     if template_mode == "Upload Custom Institutional .tex Template":
         custom_tex_file = st.file_uploader("Upload Institutional Reference Template (.tex):", type=["tex"])
         if custom_tex_file is not None:
-            raw_uploaded_tex = custom_tex_file.getvalue().decode("utf-8", errors="ignore")
-            st.session_state.tex_source = raw_uploaded_tex
-            st.success("Uploaded reference LaTeX template loaded into editor!")
+            raw_bytes = custom_tex_file.getvalue()
+            file_hash = hashlib.md5(raw_bytes).hexdigest()
+            raw_uploaded_tex = raw_bytes.decode("utf-8", errors="ignore")
+            st.session_state.custom_uploaded_tex = raw_uploaded_tex
 
+            # Automatically populate the uploaded .tex template with the created curriculum when uploaded!
+            if file_hash != st.session_state.get("last_uploaded_tex_hash"):
+                st.session_state.last_uploaded_tex_hash = file_hash
+                if st.session_state.curriculum is None:
+                    _synthesize_and_render_latex(use_custom_template=True)
+                else:
+                    compiler_tmp = LatexCompiler()
+                    st.session_state.tex_source = compiler_tmp.render_with_custom_template(
+                        st.session_state.curriculum, raw_uploaded_tex
+                    )
+                    st.session_state.tex_editor_version += 1
+                st.success("✅ Uploaded reference LaTeX template automatically populated with your created curriculum!")
+
+    # Auto-populate initial curriculum LaTeX if tex_source is still empty
+    if not st.session_state.tex_source.strip():
+        _synthesize_and_render_latex(
+            use_custom_template=(template_mode == "Upload Custom Institutional .tex Template" and bool(st.session_state.get("custom_uploaded_tex")))
+        )
+
+    sync_col1, sync_col2 = st.columns([2.2, 2.8])
+    with sync_col1:
+        if st.button("🔄 Sync / Update Created Curriculum into LaTeX Template", use_container_width=True):
+            use_custom = (template_mode == "Upload Custom Institutional .tex Template" and bool(st.session_state.get("custom_uploaded_tex")))
+            _synthesize_and_render_latex(use_custom_template=use_custom)
+            st.success("✅ LaTeX template updated with all latest Course Metadata, Multi-Domain COs, PSOs, Modules, and Assessment Marks!")
+            st.rerun()
+    with sync_col2:
+        if template_mode == "Upload Custom Institutional .tex Template" and st.session_state.get("custom_uploaded_tex"):
+            if st.button("📄 View Raw Unmodified Uploaded .tex File", use_container_width=True):
+                st.session_state.tex_source = fix_latex_option_clashes(st.session_state.custom_uploaded_tex)
+                st.session_state.tex_editor_version += 1
+                st.rerun()
+
+    editor_key = f"latex_editor_v{st.session_state.tex_editor_version}"
     tex_input = st.text_area(
         "LaTeX Source Code (.tex):",
-        value=st.session_state.tex_source or "% Click 'Synthesize Curriculum' in Tab 7 or upload a template...",
-        height=450
+        value=st.session_state.tex_source,
+        height=450,
+        key=editor_key,
     )
     st.session_state.tex_source = tex_input
 
