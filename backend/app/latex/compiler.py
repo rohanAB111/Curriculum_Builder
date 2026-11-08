@@ -14,6 +14,78 @@ from backend.app.latex.sanitizer import sanitize_latex
 from backend.app.schemas.curriculum import CurriculumCreate
 
 
+def fix_latex_option_clashes(tex: str) -> str:
+    r"""
+    Automatically resolves '! LaTeX Error: Option clash for package ...' in uploaded .tex templates:
+    1. Converts multiple \usepackage[opts]{geometry} declarations into a single \usepackage{geometry}
+       followed by \geometry{opts} commands so geometry options never clash.
+    2. Hoists package options via \PassOptionsToPackage{opts}{pkg} before \documentclass and
+       removes duplicate \usepackage calls for the same package.
+    """
+    if "\\begin{document}" not in tex:
+        return tex
+
+    preamble, body = tex.split("\\begin{document}", 1)
+
+    # 1. Resolve geometry option clashes by converting [opts] into \geometry{opts}
+    geom_seen = False
+
+    def _repl_geom(match: re.Match) -> str:
+        nonlocal geom_seen
+        opts = (match.group(1) or "").strip()
+        if not geom_seen:
+            geom_seen = True
+            if opts:
+                return f"\\usepackage{{geometry}}\n\\geometry{{{opts}}}"
+            return "\\usepackage{geometry}"
+        else:
+            if opts:
+                return f"\\geometry{{{opts}}}"
+            return "% duplicate \\usepackage{geometry} removed"
+
+    preamble = re.sub(r"\\usepackage\s*(?:\[([^\]]*)\])?\s*\{\s*geometry\s*\}", _repl_geom, preamble)
+
+    # 2. Collect options for all other packages and deduplicate repeated \usepackage calls
+    pkg_options: Dict[str, List[str]] = {}
+    for m in re.finditer(r"\\usepackage\s*\[([^\]]+)\]\s*\{([^}]+)\}", preamble):
+        opts_str, pkgs_str = m.group(1), m.group(2)
+        opts_list = [o.strip() for o in opts_str.split(",") if o.strip()]
+        for pkg in [p.strip() for p in pkgs_str.split(",") if p.strip()]:
+            pkg_options.setdefault(pkg, [])
+            for o in opts_list:
+                if o not in pkg_options[pkg]:
+                    pkg_options[pkg].append(o)
+
+    seen_pkgs = set()
+
+    def _dedup_usepackage(match: re.Match) -> str:
+        opts = (match.group(1) or "").strip()
+        pkgs = [p.strip() for p in match.group(2).split(",") if p.strip()]
+        remaining = [p for p in pkgs if p not in seen_pkgs]
+        for p in remaining:
+            seen_pkgs.add(p)
+        if not remaining:
+            if len(pkgs) == 1 and pkgs[0] == "hyperref" and opts:
+                return f"\\hypersetup{{{opts}}}"
+            return f"% duplicate \\usepackage{{{','.join(pkgs)}}} removed"
+        return f"\\usepackage{{{','.join(remaining)}}}"
+
+    preamble = re.sub(r"\\usepackage\s*(?:\[([^\]]*)\])?\s*\{([^}]+)\}", _dedup_usepackage, preamble)
+
+    pass_lines = []
+    for pkg, opts in pkg_options.items():
+        if opts and pkg != "geometry":
+            pass_lines.append(f"\\PassOptionsToPackage{{{','.join(opts)}}}{{{pkg}}}")
+    if ("xcolor" in seen_pkgs or "colortbl" in seen_pkgs) and "xcolor" not in pkg_options:
+        pass_lines.append("\\PassOptionsToPackage{table,dvipsnames}{xcolor}")
+
+    if pass_lines:
+        pass_block = "\n".join(pass_lines) + "\n"
+        preamble = re.sub(r"(\\documentclass)", lambda m: pass_block + m.group(1), preamble, count=1)
+
+    return preamble + "\\begin{document}" + body
+
+
 @dataclass
 class CompilationResult:
     success: bool
@@ -32,7 +104,7 @@ class LatexCompiler:
             os.path.dirname(os.path.dirname(__file__)), "templates"
         )
         self.template_name = os.path.basename(template_path) if template_path else "curriculum_nba_aicte.tex.j2"
-        
+
         self.env = jinja2.Environment(
             loader=jinja2.FileSystemLoader(self.template_dir),
             block_start_string=r"\BLOCK{",
@@ -60,7 +132,7 @@ class LatexCompiler:
 
     def render_template(self, curriculum: CurriculumCreate) -> str:
         template = self.env.get_template(self.template_name)
-        
+
         matrix_lookup: Dict[str, str] = {}
         target_totals: Dict[str, List[int]] = {}
 
@@ -78,15 +150,17 @@ class LatexCompiler:
             else:
                 averages[target] = "-"
 
-        # Extract PSOs dynamically from course meta
         pso_items = []
         if curriculum.course_meta.psos:
-            pso_items = [p.dict() if hasattr(p, "dict") else {"pso_id": p.get("pso_id", "PSO1"), "statement": p.get("statement", "")} for p in curriculum.course_meta.psos]
+            pso_items = [
+                p.dict() if hasattr(p, "dict") else {"pso_id": p.get("pso_id", "PSO1"), "statement": p.get("statement", "")}
+                for p in curriculum.course_meta.psos
+            ]
         else:
             pso_items = [
                 {"pso_id": "PSO1", "statement": "Professional Skills: Design and develop enterprise cloud and edge systems."},
                 {"pso_id": "PSO2", "statement": "Industrial Competence: Implement streaming data architectures and real-time AI pipelines."},
-                {"pso_id": "PSO3", "statement": "Research & Ethics: Formulate secure, sustainable computing solutions."}
+                {"pso_id": "PSO3", "statement": "Research & Ethics: Formulate secure, sustainable computing solutions."},
             ]
 
         po_list = [f"PO{i}" for i in range(1, 13)]
@@ -123,6 +197,7 @@ class LatexCompiler:
         pdf_filename = f"{safe_prefix}.pdf"
         zip_filename = f"{safe_prefix}_export.zip"
 
+        tex_source = fix_latex_option_clashes(tex_source)
         tex_file_path = os.path.join(build_dir, tex_filename)
         with open(tex_file_path, "w", encoding="utf-8") as f:
             f.write(tex_source)
